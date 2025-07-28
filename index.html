@@ -191,6 +191,24 @@
                             carga</li>
                     </ul>
                 </div>
+
+                <div class="help-section danger-section">
+                    <h4>⚠️ Zona de peligro</h4>
+                    <p style="margin-bottom: 15px; color: #dc3545; font-weight: 500;">
+                        ¡Cuidado! Esta acción eliminará permanentemente todos los datos guardados:
+                    </p>
+                    <ul style="margin-bottom: 20px;">
+                        <li>Todos los productos marcados como comprados</li>
+                        <li>Filtros guardados (grupo, categoría, búsqueda)</li>
+                        <li>Estado de búsqueda actual</li>
+                    </ul>
+                    <button id="resetAppButton" class="reset-button">
+                        🗑️ Resetear aplicación completa
+                    </button>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #6c757d; font-style: italic;">
+                        Se pedirá confirmación antes de ejecutar
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -1070,6 +1088,17 @@
                     helpModal.style.display = 'none';
                 }
             });
+
+            const resetAppButton = document.getElementById('resetAppButton');
+            if (resetAppButton) {
+                resetAppButton.addEventListener('click', () => {
+                    const confirmReset = confirm("¿Estás seguro de que deseas resetear la aplicación? Esta acción es irreversible.");
+                    if (confirmReset) {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                });
+            }
         });
     </script>
 </body>
