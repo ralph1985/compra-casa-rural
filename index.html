@@ -167,6 +167,9 @@
             }
 
             savePurchasedState();
+
+            // Actualizar los filtros para reflejar los nuevos conteos
+            populateFilters(originalData);
         }
 
         // Función para parsear CSV
@@ -252,37 +255,53 @@
 
             if (grupoColumnIndex === -1 && categoriaColumnIndex === -1) return;
 
-            // Obtener valores únicos para cada filtro
-            const grupos = new Set();
-            const categorias = new Set();
+            // Obtener valores únicos para cada filtro y contar ocurrencias y comprados
+            const grupos = new Map();
+            const categorias = new Map();
 
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
+                const rowId = generateRowId(row);
+                const isComprado = purchasedItems.has(rowId);
+
                 if (grupoColumnIndex !== -1 && row[grupoColumnIndex]) {
-                    grupos.add(row[grupoColumnIndex]);
+                    const grupo = row[grupoColumnIndex];
+                    if (!grupos.has(grupo)) {
+                        grupos.set(grupo, { total: 0, comprados: 0 });
+                    }
+                    const stats = grupos.get(grupo);
+                    stats.total += 1;
+                    if (isComprado) stats.comprados += 1;
                 }
+
                 if (categoriaColumnIndex !== -1 && row[categoriaColumnIndex]) {
-                    categorias.add(row[categoriaColumnIndex]);
+                    const categoria = row[categoriaColumnIndex];
+                    if (!categorias.has(categoria)) {
+                        categorias.set(categoria, { total: 0, comprados: 0 });
+                    }
+                    const stats = categorias.get(categoria);
+                    stats.total += 1;
+                    if (isComprado) stats.comprados += 1;
                 }
             }
 
-            // Poblar selector de grupos
+            // Poblar selector de grupos con conteos de comprados
             const grupoSelect = document.getElementById('grupoFilter');
             grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
-            grupos.forEach(grupo => {
+            grupos.forEach((stats, grupo) => {
                 const option = document.createElement('option');
                 option.value = grupo;
-                option.textContent = grupo;
+                option.textContent = `${grupo} (${stats.comprados} de ${stats.total})`;
                 grupoSelect.appendChild(option);
             });
 
-            // Poblar selector de categorías
+            // Poblar selector de categorías con conteos de comprados
             const categoriaSelect = document.getElementById('categoriaFilter');
             categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
-            categorias.forEach(categoria => {
+            categorias.forEach((stats, categoria) => {
                 const option = document.createElement('option');
                 option.value = categoria;
-                option.textContent = categoria;
+                option.textContent = `${categoria} (${stats.comprados} de ${stats.total})`;
                 categoriaSelect.appendChild(option);
             });
 
