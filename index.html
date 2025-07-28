@@ -1067,7 +1067,7 @@
         function checkAppVersion() {
             const savedVersion = localStorage.getItem(VERSION_KEY);
 
-            if (savedVersion && savedVersion !== APP_VERSION) {
+            if (savedVersion !== APP_VERSION) {
                 showVersionUpdateModal();
                 return false;
             }
