@@ -359,6 +359,12 @@
             } else {
                 createTable(filteredData);
             }
+
+            // Resetear scroll al inicio después de filtrar
+            const itemsContainer = document.getElementById('itemsContainer');
+            if (itemsContainer) {
+                itemsContainer.scrollTop = 0;
+            }
         }
 
         // Función para crear la vista de tarjetas
