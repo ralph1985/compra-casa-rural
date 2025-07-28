@@ -116,6 +116,7 @@ body {
     flex: 1;
     overflow-y: auto;
     padding-right: 8px;
+    padding-bottom: 40px;
 }
 
 /* Scrollbar personalizado para webkit browsers */
