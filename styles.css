@@ -3,6 +3,8 @@ body {
     padding: 0;
     background-color: #f8f9fa;
     font-family: Arial, sans-serif;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .container {
@@ -12,6 +14,10 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {
@@ -20,13 +26,15 @@ body {
         padding: 10px;
         border-radius: 0;
         box-shadow: none;
+        height: 100vh;
     }
 }
 
 .welcome-message {
     text-align: center;
     color: #2c3e50;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .welcome-message h1 {
@@ -39,9 +47,17 @@ body {
     }
 }
 
+.table-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
 .table-container h2 {
     color: #2c3e50;
     margin-bottom: 20px;
+    flex-shrink: 0;
 }
 
 .filters-container {
@@ -52,6 +68,7 @@ body {
     background-color: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #e9ecef;
+    flex-shrink: 0;
 }
 
 .filter-group {
@@ -96,6 +113,28 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Scrollbar personalizado para webkit browsers */
+.items-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.items-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.items-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.items-container::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
 }
 
 /* Estilos para cada tarjeta de producto */
