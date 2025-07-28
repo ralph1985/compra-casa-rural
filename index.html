@@ -819,14 +819,7 @@
                 // Añadir timestamp para evitar cache
                 const timestamp = new Date().getTime();
                 const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
-                const response = await fetch(urlWithCache, {
-                    cache: 'no-cache',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
+                const response = await fetch(urlWithCache);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
