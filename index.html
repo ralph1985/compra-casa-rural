@@ -12,7 +12,6 @@
 
 <body>
     <div class="container">
-        <!-- Pull to refresh indicator -->
         <div id="pullToRefreshIndicator" class="pull-to-refresh-indicator">
             <span class="pull-refresh-icon">↓</span>
             <span class="pull-refresh-text">Desliza para actualizar</span>
@@ -74,7 +73,6 @@
         </div>
     </div>
 
-    <!-- Modal de ayuda -->
     <div id="helpModal" class="help-modal" style="display: none;">
         <div class="help-modal-content">
             <div class="help-modal-header">
@@ -221,9 +219,7 @@
 
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
-
-        // VERSION CONTROL - Actualiza esta fecha cuando quieras forzar un reset
-        const APP_VERSION = "2025-07-28"; // Formato: YYYY-MM-DD
+        const APP_VERSION = "2025-07-28";
         const VERSION_KEY = "appVersion";
 
         let originalData = [];
@@ -423,10 +419,8 @@
             const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
             const headers = originalData[0];
 
-            // Para los contadores, siempre usamos todos los datos originales sin filtrar por estado
             let dataForCounters = originalData.slice(1);
 
-            // Solo aplicamos filtros de grupo y categoría para los contadores
             if (grupoFilter && grupoColumnIndex !== -1) {
                 dataForCounters = dataForCounters.filter(row => row[grupoColumnIndex] === grupoFilter);
             }
@@ -435,7 +429,6 @@
                 dataForCounters = dataForCounters.filter(row => row[categoriaColumnIndex] === categoriaFilter);
             }
 
-            // Calculamos contadores basados en los datos filtrados solo por grupo/categoría
             const grupos = new Map();
             const categorias = new Map();
 
@@ -469,7 +462,6 @@
             grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
 
             if (!categoriaFilter) {
-                // Si no hay filtro de categoría, mostramos todos los grupos con sus contadores completos
                 const allGrupos = new Map();
                 for (let i = 1; i < originalData.length; i++) {
                     const row = originalData[i];
@@ -494,7 +486,6 @@
                     grupoSelect.appendChild(option);
                 });
             } else {
-                // Si hay filtro de categoría, mostramos solo los grupos que tienen esa categoría
                 grupos.forEach((stats, grupo) => {
                     const option = document.createElement('option');
                     option.value = grupo;
@@ -510,7 +501,6 @@
             categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
 
             if (!grupoFilter) {
-                // Si no hay filtro de grupo, mostramos todas las categorías con sus contadores completos
                 const allCategorias = new Map();
                 for (let i = 1; i < originalData.length; i++) {
                     const row = originalData[i];
@@ -535,7 +525,6 @@
                     categoriaSelect.appendChild(option);
                 });
             } else {
-                // Si hay filtro de grupo, mostramos solo las categorías que tiene ese grupo
                 categorias.forEach((stats, categoria) => {
                     const option = document.createElement('option');
                     option.value = categoria;
@@ -913,9 +902,7 @@
                 currentSort = { column: -1, direction: 'asc' };
 
                 loadPurchasedState();
-
                 populateFilters(data);
-
                 loadFiltersState();
 
                 setTimeout(() => {
@@ -1077,25 +1064,21 @@
             }
         }
 
-        // Función para verificar la versión de la aplicación
         function checkAppVersion() {
             const savedVersion = localStorage.getItem(VERSION_KEY);
-            
+
             if (savedVersion && savedVersion !== APP_VERSION) {
-                // La versión ha cambiado, mostrar modal de actualización
                 showVersionUpdateModal();
-                return false; // No cargar la aplicación hasta que el usuario confirme
+                return false;
             }
-            
-            return true; // Versión OK o primera vez
+
+            return true;
         }
 
-        // Función para actualizar la versión guardada
         function updateAppVersion() {
             localStorage.setItem(VERSION_KEY, APP_VERSION);
         }
 
-        // Función para mostrar el modal de actualización de versión
         function showVersionUpdateModal() {
             const overlay = document.createElement('div');
             overlay.id = 'versionUpdateOverlay';
@@ -1163,7 +1146,6 @@
                 </button>
             `;
 
-            // Añadir animaciones CSS
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes fadeIn {
@@ -1182,7 +1164,6 @@
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            // Efecto hover para el botón
             const updateButton = document.getElementById('updateAppButton');
             updateButton.addEventListener('mouseenter', () => {
                 updateButton.style.transform = 'translateY(-3px)';
@@ -1193,22 +1174,17 @@
                 updateButton.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
             });
 
-            // Manejar la actualización
             updateButton.addEventListener('click', () => {
-                // Actualizar la versión guardada
                 updateAppVersion();
-                
-                // Mostrar mensaje de actualización y recargar
                 updateButton.textContent = 'Actualizando...';
                 updateButton.style.background = '#28a745';
-                
+
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
             });
         }
 
-        // Pull to refresh functionality
         let isRefreshing = false;
         let startY = 0;
         let currentY = 0;
@@ -1225,14 +1201,12 @@
             let isTouching = false;
             let canPull = false;
 
-            // Touch events for mobile
             container.addEventListener('touchstart', (e) => {
                 if (isRefreshing) return;
-                
-                // Check if we're at the top of the page and scrolled content
+
                 const itemsContainer = document.getElementById('itemsContainer');
                 const isAtTop = itemsContainer.scrollTop === 0;
-                
+
                 if (isAtTop) {
                     startY = e.touches[0].clientY;
                     isTouching = true;
@@ -1245,23 +1219,18 @@
 
                 currentY = e.touches[0].clientY;
                 pullDistance = Math.max(0, currentY - startY);
-
-                // Limit pull distance
                 pullDistance = Math.min(pullDistance, MAX_PULL_DISTANCE);
 
                 if (pullDistance > 10) {
-                    // Apply resistance effect
                     const resistance = Math.min(pullDistance / MAX_PULL_DISTANCE, 1);
                     const adjustedDistance = pullDistance * (1 - resistance * 0.5);
-                    
-                    // Update indicator position and visibility
+
                     indicator.style.transform = `translateX(-50%) translateY(${adjustedDistance - 80}px)`;
-                    
+
                     if (pullDistance > 30) {
                         indicator.classList.add('visible');
                     }
 
-                    // Update text and icon based on pull distance
                     if (pullDistance >= PULL_THRESHOLD) {
                         text.textContent = 'Suelta para actualizar';
                         icon.style.transform = 'rotate(180deg)';
@@ -1281,7 +1250,6 @@
                 canPull = false;
 
                 if (pullDistance >= PULL_THRESHOLD && !isRefreshing) {
-                    // Trigger refresh
                     isRefreshing = true;
                     indicator.classList.add('refreshing');
                     text.textContent = 'Actualizando...';
@@ -1289,18 +1257,14 @@
                     icon.style.transform = 'rotate(0deg)';
 
                     try {
-                        // Add a small delay for better UX
                         await new Promise(resolve => setTimeout(resolve, 500));
-                        
-                        // Reload data
                         await loadData();
-                        
-                        // Success feedback
+
                         text.textContent = '¡Actualizado!';
                         icon.textContent = '✓';
-                        
+
                         await new Promise(resolve => setTimeout(resolve, 800));
-                        
+
                     } catch (error) {
                         console.error('Error during pull to refresh:', error);
                         text.textContent = 'Error al actualizar';
@@ -1309,26 +1273,24 @@
                     }
                 }
 
-                // Reset indicator
                 indicator.style.transform = 'translateX(-50%) translateY(-80px)';
                 indicator.classList.remove('visible', 'refreshing');
                 text.textContent = 'Desliza para actualizar';
                 icon.textContent = '↓';
                 icon.style.transform = 'rotate(0deg)';
-                
+
                 isRefreshing = false;
                 pullDistance = 0;
             }, { passive: true });
 
-            // Mouse events for desktop testing
             let isMouseDown = false;
-            
+
             container.addEventListener('mousedown', (e) => {
                 if (isRefreshing) return;
-                
+
                 const itemsContainer = document.getElementById('itemsContainer');
                 const isAtTop = itemsContainer.scrollTop === 0;
-                
+
                 if (isAtTop) {
                     startY = e.clientY;
                     isMouseDown = true;
@@ -1347,9 +1309,9 @@
                 if (pullDistance > 10) {
                     const resistance = Math.min(pullDistance / MAX_PULL_DISTANCE, 1);
                     const adjustedDistance = pullDistance * (1 - resistance * 0.5);
-                    
+
                     indicator.style.transform = `translateX(-50%) translateY(${adjustedDistance - 80}px)`;
-                    
+
                     if (pullDistance > 30) {
                         indicator.classList.add('visible');
                     }
@@ -1383,11 +1345,11 @@
                     try {
                         await new Promise(resolve => setTimeout(resolve, 500));
                         await loadData();
-                        
+
                         text.textContent = '¡Actualizado!';
                         icon.textContent = '✓';
                         await new Promise(resolve => setTimeout(resolve, 800));
-                        
+
                     } catch (error) {
                         console.error('Error during pull to refresh:', error);
                         text.textContent = 'Error al actualizar';
@@ -1401,12 +1363,11 @@
                 text.textContent = 'Desliza para actualizar';
                 icon.textContent = '↓';
                 icon.style.transform = 'rotate(0deg)';
-                
+
                 isRefreshing = false;
                 pullDistance = 0;
             });
 
-            // Prevent default scroll behavior during pull
             container.addEventListener('touchmove', (e) => {
                 if (pullDistance > 10 && !isRefreshing) {
                     e.preventDefault();
@@ -1415,19 +1376,14 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Verificar versión antes de cargar la aplicación
             const versionOK = checkAppVersion();
-            
+
             if (versionOK) {
-                // Solo cargar la aplicación si la versión es correcta
                 loadData();
                 startDataChangeTimer();
                 initPullToRefresh();
-                
-                // Actualizar la versión guardada (por si es la primera vez)
                 updateAppVersion();
             }
-            // Si la versión no es correcta, el modal ya se ha mostrado y no cargamos nada más
 
             const helpButton = document.getElementById('helpButton');
             const helpModal = document.getElementById('helpModal');
@@ -1450,10 +1406,37 @@
             const resetAppButton = document.getElementById('resetAppButton');
             if (resetAppButton) {
                 resetAppButton.addEventListener('click', () => {
-                    const confirmReset = confirm("¿Estás seguro de que deseas resetear la aplicación? Esta acción es irreversible.");
-                    if (confirmReset) {
-                        localStorage.clear();
-                        location.reload();
+                    const confirmation = confirm(
+                        '⚠️ ¿Estás seguro de que quieres resetear la aplicación?\n\n' +
+                        'Esta acción eliminará PERMANENTEMENTE:\n' +
+                        '• Todos los productos marcados como comprados\n' +
+                        '• Filtros guardados (grupo, categoría, búsqueda)\n' +
+                        '• Estado de búsqueda actual\n\n' +
+                        'No se puede deshacer esta acción.'
+                    );
+
+                    if (confirmation) {
+                        const doubleConfirmation = confirm(
+                            '🚨 ÚLTIMA CONFIRMACIÓN 🚨\n\n' +
+                            'Vas a eliminar TODOS los datos guardados de la aplicación.\n\n' +
+                            '¿Proceder con el reseteo completo?'
+                        );
+
+                        if (doubleConfirmation) {
+                            try {
+                                localStorage.removeItem('purchasedItems');
+                                localStorage.removeItem('grupoFilter');
+                                localStorage.removeItem('categoriaFilter');
+                                localStorage.removeItem('productoSearch');
+                                localStorage.removeItem('estadoFilter');
+
+                                alert('✅ Aplicación reseteada correctamente.\n\nLa página se recargará para aplicar los cambios.');
+                                location.reload();
+                            } catch (error) {
+                                console.error('Error al resetear la aplicación:', error);
+                                alert('❌ Error al resetear la aplicación. Por favor, inténtalo de nuevo.');
+                            }
+                        }
                     }
                 });
             }
