@@ -14,6 +14,15 @@ body {
     padding: 20px;
 }
 
+@media (max-width: 768px) {
+    .container {
+        margin: 0;
+        padding: 10px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
+
 .welcome-message {
     text-align: center;
     color: #2c3e50;
@@ -22,6 +31,12 @@ body {
 
 .welcome-message h1 {
     margin: 0;
+}
+
+@media (max-width: 768px) {
+    .welcome-message h1 {
+        font-size: 1.5rem;
+    }
 }
 
 .table-container h2 {
@@ -72,28 +87,64 @@ body {
     .filters-container {
         flex-direction: column;
         gap: 15px;
+        padding: 10px;
     }
+}
+
+/* Contenedor responsive para la tabla */
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 table {
     width: 100%;
+    min-width: 500px;
     border-collapse: collapse;
     background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    white-space: nowrap;
 }
 
 th {
     background-color: #f8f9fa;
     font-weight: bold;
     color: #2c3e50;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    th, td {
+        padding: 8px;
+        font-size: 14px;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+    
+    /* Hacer que las celdas permitan salto de línea en móvil */
+    td {
+        white-space: normal;
+        word-break: break-word;
+        max-width: 150px;
+    }
+    
+    /* Mantener el checkbox sin salto de línea */
+    td:first-child {
+        white-space: nowrap;
+        max-width: none;
+        width: 60px;
+    }
 }
 
 tr:hover {
