@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gestión de Compras - Casa Rural</title>
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+    <link rel="icon" type="image/x-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -61,13 +62,17 @@
                 <div class="help-section">
                     <h4>🔍 Filtros y búsqueda</h4>
                     <ul>
-                        <li><strong>Buscar producto:</strong> Escribe cualquier parte del nombre del producto para encontrarlo rápidamente
+                        <li><strong>Buscar producto:</strong> Escribe cualquier parte del nombre del producto para
+                            encontrarlo rápidamente
                         </li>
-                        <li><strong>Filtrar por Grupo:</strong> Selecciona un grupo específico (ej: Celi y Ricardo, Alba y Javi) para ver solo los productos de ese grupo
+                        <li><strong>Filtrar por Grupo:</strong> Selecciona un grupo específico (ej: Celi y Ricardo, Alba
+                            y Javi) para ver solo los productos de ese grupo
                         </li>
-                        <li><strong>Filtrar por Categoría:</strong> Filtra por tipo de producto (ej: Verduras, Lácteos, Carnes)
+                        <li><strong>Filtrar por Categoría:</strong> Filtra por tipo de producto (ej: Verduras, Lácteos,
+                            Carnes)
                         </li>
-                        <li>Los números entre paréntesis muestran <strong>(comprados de total)</strong> para hacer seguimiento del progreso
+                        <li>Los números entre paréntesis muestran <strong>(comprados de total)</strong> para hacer
+                            seguimiento del progreso
                         </li>
                     </ul>
                 </div>
@@ -77,7 +82,8 @@
                     <ul>
                         <li>Haz clic en el checkbox a la izquierda de cada producto para marcarlo como comprado
                         </li>
-                        <li><strong>Los productos comprados se mueven automáticamente al final de la lista</strong> con una animación suave
+                        <li><strong>Los productos comprados se mueven automáticamente al final de la lista</strong> con
+                            una animación suave
                         </li>
                         <li>Si desmarcas un producto comprado, volverá al principio de la lista
                         </li>
@@ -89,7 +95,8 @@
                 <div class="help-section">
                     <h4>🎨 Colores y organización</h4>
                     <ul>
-                        <li>Cada <span class="help-categoria">categoría</span> tiene un color distintivo para identificarla fácilmente
+                        <li>Cada <span class="help-categoria">categoría</span> tiene un color distintivo para
+                            identificarla fácilmente
                         </li>
                         <li>Cada <span class="help-grupo">grupo</span> también tiene su propio color único
                         </li>
@@ -365,7 +372,7 @@
             const grupoSelect = document.getElementById('grupoFilter');
             const currentGrupoValue = grupoSelect.value;
             grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
-            
+
             // Si no hay filtro de categoría, mostrar todos los grupos originales
             if (!categoriaFilter) {
                 // Recalcular con todos los datos originales para grupos
@@ -374,7 +381,7 @@
                     const row = originalData[i];
                     const rowId = generateRowId(row);
                     const isComprado = purchasedItems.has(rowId);
-                    
+
                     if (grupoColumnIndex !== -1 && row[grupoColumnIndex]) {
                         const grupo = row[grupoColumnIndex];
                         if (!allGrupos.has(grupo)) {
@@ -385,7 +392,7 @@
                         if (isComprado) stats.comprados += 1;
                     }
                 }
-                
+
                 allGrupos.forEach((stats, grupo) => {
                     const option = document.createElement('option');
                     option.value = grupo;
@@ -401,14 +408,14 @@
                     grupoSelect.appendChild(option);
                 });
             }
-            
+
             grupoSelect.value = currentGrupoValue;
 
             // Actualizar selector de categorías
             const categoriaSelect = document.getElementById('categoriaFilter');
             const currentCategoriaValue = categoriaSelect.value;
             categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
-            
+
             // Si no hay filtro de grupo, mostrar todas las categorías originales
             if (!grupoFilter) {
                 // Recalcular con todos los datos originales para categorías
@@ -417,7 +424,7 @@
                     const row = originalData[i];
                     const rowId = generateRowId(row);
                     const isComprado = purchasedItems.has(rowId);
-                    
+
                     if (categoriaColumnIndex !== -1 && row[categoriaColumnIndex]) {
                         const categoria = row[categoriaColumnIndex];
                         if (!allCategorias.has(categoria)) {
@@ -428,7 +435,7 @@
                         if (isComprado) stats.comprados += 1;
                     }
                 }
-                
+
                 allCategorias.forEach((stats, categoria) => {
                     const option = document.createElement('option');
                     option.value = categoria;
@@ -444,7 +451,7 @@
                     categoriaSelect.appendChild(option);
                 });
             }
-            
+
             categoriaSelect.value = currentCategoriaValue;
         }
 
@@ -478,7 +485,7 @@
                 updateFiltersBasedOnSelection();
                 filterData();
             });
-            
+
             categoriaSelect.addEventListener('change', () => {
                 saveFiltersState();
                 updateFiltersBasedOnSelection();
@@ -733,7 +740,7 @@
         function moveElementToPosition(element, isMovingToEnd) {
             // Añadir clase de animación
             element.classList.add('moving');
-            
+
             if (isMovingToEnd) {
                 element.style.transform = 'translateX(100%)';
                 element.style.opacity = '0.3';
@@ -792,7 +799,7 @@
             const errorDiv = document.getElementById('error');
             errorDiv.querySelector('.error-message').textContent = message;
             errorDiv.style.display = 'block';
-            
+
             // Añadir event listener al botón de reintentar si no existe ya
             const retryButton = document.getElementById('retryButton');
             if (retryButton && !retryButton.hasAttribute('data-listener-added')) {
@@ -809,7 +816,17 @@
             showLoading();
 
             try {
-                const response = await fetch(CSV_URL);
+                // Añadir timestamp para evitar cache
+                const timestamp = new Date().getTime();
+                const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
+                const response = await fetch(urlWithCache, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -948,7 +965,18 @@
         // Función para verificar cambios en los datos
         async function checkForDataChanges() {
             try {
-                const response = await fetch(CSV_URL);
+                // Añadir timestamp para evitar cache también en las verificaciones
+                const timestamp = new Date().getTime();
+                const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
+                const response = await fetch(urlWithCache, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+
                 if (!response.ok) {
                     console.log('Error al verificar cambios:', response.status);
                     return;
@@ -997,7 +1025,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             startDataChangeTimer(); // Iniciar el temporizador al cargar
-            
+
             // Manejar apertura y cierre del modal de ayuda
             const helpButton = document.getElementById('helpButton');
             const helpModal = document.getElementById('helpModal');
