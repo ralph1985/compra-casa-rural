@@ -262,10 +262,12 @@ body {
         opacity: 0;
         transform: translateX(-50px) scale(0.95);
     }
+
     50% {
         opacity: 0.5;
         transform: translateX(-10px) scale(0.98);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0) scale(1);
@@ -535,17 +537,21 @@ body {
     max-width: 600px;
     width: 100%;
     max-height: 80vh;
-    overflow-y: auto;
+    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
 }
 
 .help-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px 0;
+    padding: 20px 24px;
     border-bottom: 1px solid #e9ecef;
-    margin-bottom: 20px;
+    flex-shrink: 0;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    border-radius: 16px 16px 0 0;
 }
 
 .help-modal-header h3 {
@@ -576,9 +582,12 @@ body {
 }
 
 .help-modal-body {
-    padding: 0 24px 24px;
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
 }
 
+/* Sección de ayuda */
 .help-section {
     margin-bottom: 24px;
 }
@@ -625,30 +634,30 @@ body {
     .help-modal {
         padding: 10px;
     }
-    
+
     .help-modal-content {
         max-height: 90vh;
     }
-    
+
     .help-modal-header {
-        padding: 16px 20px 0;
+        padding: 16px 20px;
     }
-    
+
     .help-modal-body {
-        padding: 0 20px 20px;
+        padding: 20px;
     }
-    
+
     .help-section h4 {
         font-size: 1rem;
     }
-    
+
     .help-button {
         width: 28px;
         height: 28px;
         top: 10px;
         right: 10px;
     }
-    
+
     .help-icon {
         font-size: 16px;
     }
