@@ -862,7 +862,7 @@
 
         // Función para generar hash de los datos para detectar cambios
         function generateDataHash(data) {
-            return btoa(JSON.stringify(data)).slice(0, 20);
+            return btoa(JSON.stringify(data));
         }
 
         // Función para mostrar popup de cambios detectados
