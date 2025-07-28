@@ -1175,7 +1175,21 @@
             });
 
             updateButton.addEventListener('click', () => {
-                updateAppVersion();
+                // Clear all localStorage data before updating
+                try {
+                    localStorage.removeItem('purchasedItems');
+                    localStorage.removeItem('grupoFilter');
+                    localStorage.removeItem('categoriaFilter');
+                    localStorage.removeItem('productoSearch');
+                    localStorage.removeItem('estadoFilter');
+                    // Update version after clearing
+                    updateAppVersion();
+                } catch (error) {
+                    console.error('Error clearing localStorage:', error);
+                    // Still update version even if clearing fails
+                    updateAppVersion();
+                }
+                
                 updateButton.textContent = 'Actualizando...';
                 updateButton.style.background = '#28a745';
 
