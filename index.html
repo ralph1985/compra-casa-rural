@@ -862,7 +862,14 @@
 
         // Función para generar hash de los datos para detectar cambios
         function generateDataHash(data) {
-            return btoa(JSON.stringify(data));
+            const jsonString = JSON.stringify(data);
+            let hash = 0;
+            for (let i = 0; i < jsonString.length; i++) {
+                const char = jsonString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convertir a 32-bit integer
+            }
+            return hash.toString();
         }
 
         // Función para mostrar popup de cambios detectados
