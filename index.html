@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Compras - Casa Rural</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <app-compra-rural></app-compra-rural>
+
+    <script type="module">
+        import { LitElement, html, css } from 'https://unpkg.com/lit@3.1.0/index.js';
+
+        class AppCompraRural extends LitElement {
+            static styles = css`
+                :host {
+                    display: block;
+                    padding: 20px;
+                    font-family: Arial, sans-serif;
+                }
+                
+                .welcome-message {
+                    text-align: center;
+                    color: #2c3e50;
+                    margin-bottom: 20px;
+                }
+            `;
+
+            render() {
+                return html`
+                    <div class="welcome-message">
+                        <h1>Gestión de la compra - Casa Rural</h1>
+                    </div>
+                `;
+            }
+        }
+
+        customElements.define('app-compra-rural', AppCompraRural);
+    </script>
+</body>
+</html>
