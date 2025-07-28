@@ -12,6 +12,12 @@
 
 <body>
     <div class="container">
+        <!-- Pull to refresh indicator -->
+        <div id="pullToRefreshIndicator" class="pull-to-refresh-indicator">
+            <span class="pull-refresh-icon">↓</span>
+            <span class="pull-refresh-text">Desliza para actualizar</span>
+        </div>
+
         <div class="welcome-message">
             <h1>Gestión de la compra - Casa Rural</h1>
             <button id="helpButton" class="help-button" title="Ayuda">
@@ -1067,9 +1073,216 @@
             }
         }
 
+        // Pull to refresh functionality
+        let isRefreshing = false;
+        let startY = 0;
+        let currentY = 0;
+        let pullDistance = 0;
+        const PULL_THRESHOLD = 80;
+        const MAX_PULL_DISTANCE = 120;
+
+        function initPullToRefresh() {
+            const container = document.querySelector('.container');
+            const indicator = document.getElementById('pullToRefreshIndicator');
+            const icon = indicator.querySelector('.pull-refresh-icon');
+            const text = indicator.querySelector('.pull-refresh-text');
+
+            let isTouching = false;
+            let canPull = false;
+
+            // Touch events for mobile
+            container.addEventListener('touchstart', (e) => {
+                if (isRefreshing) return;
+                
+                // Check if we're at the top of the page and scrolled content
+                const itemsContainer = document.getElementById('itemsContainer');
+                const isAtTop = itemsContainer.scrollTop === 0;
+                
+                if (isAtTop) {
+                    startY = e.touches[0].clientY;
+                    isTouching = true;
+                    canPull = true;
+                }
+            }, { passive: true });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isTouching || !canPull || isRefreshing) return;
+
+                currentY = e.touches[0].clientY;
+                pullDistance = Math.max(0, currentY - startY);
+
+                // Limit pull distance
+                pullDistance = Math.min(pullDistance, MAX_PULL_DISTANCE);
+
+                if (pullDistance > 10) {
+                    // Apply resistance effect
+                    const resistance = Math.min(pullDistance / MAX_PULL_DISTANCE, 1);
+                    const adjustedDistance = pullDistance * (1 - resistance * 0.5);
+                    
+                    // Update indicator position and visibility
+                    indicator.style.transform = `translateX(-50%) translateY(${adjustedDistance - 80}px)`;
+                    
+                    if (pullDistance > 30) {
+                        indicator.classList.add('visible');
+                    }
+
+                    // Update text and icon based on pull distance
+                    if (pullDistance >= PULL_THRESHOLD) {
+                        text.textContent = 'Suelta para actualizar';
+                        icon.style.transform = 'rotate(180deg)';
+                        icon.textContent = '↑';
+                    } else {
+                        text.textContent = 'Desliza para actualizar';
+                        icon.style.transform = 'rotate(0deg)';
+                        icon.textContent = '↓';
+                    }
+                }
+            }, { passive: true });
+
+            container.addEventListener('touchend', async (e) => {
+                if (!isTouching || !canPull) return;
+
+                isTouching = false;
+                canPull = false;
+
+                if (pullDistance >= PULL_THRESHOLD && !isRefreshing) {
+                    // Trigger refresh
+                    isRefreshing = true;
+                    indicator.classList.add('refreshing');
+                    text.textContent = 'Actualizando...';
+                    icon.textContent = '⟳';
+                    icon.style.transform = 'rotate(0deg)';
+
+                    try {
+                        // Add a small delay for better UX
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        // Reload data
+                        await loadData();
+                        
+                        // Success feedback
+                        text.textContent = '¡Actualizado!';
+                        icon.textContent = '✓';
+                        
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
+                    } catch (error) {
+                        console.error('Error during pull to refresh:', error);
+                        text.textContent = 'Error al actualizar';
+                        icon.textContent = '✗';
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                }
+
+                // Reset indicator
+                indicator.style.transform = 'translateX(-50%) translateY(-80px)';
+                indicator.classList.remove('visible', 'refreshing');
+                text.textContent = 'Desliza para actualizar';
+                icon.textContent = '↓';
+                icon.style.transform = 'rotate(0deg)';
+                
+                isRefreshing = false;
+                pullDistance = 0;
+            }, { passive: true });
+
+            // Mouse events for desktop testing
+            let isMouseDown = false;
+            
+            container.addEventListener('mousedown', (e) => {
+                if (isRefreshing) return;
+                
+                const itemsContainer = document.getElementById('itemsContainer');
+                const isAtTop = itemsContainer.scrollTop === 0;
+                
+                if (isAtTop) {
+                    startY = e.clientY;
+                    isMouseDown = true;
+                    canPull = true;
+                    e.preventDefault();
+                }
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isMouseDown || !canPull || isRefreshing) return;
+
+                currentY = e.clientY;
+                pullDistance = Math.max(0, currentY - startY);
+                pullDistance = Math.min(pullDistance, MAX_PULL_DISTANCE);
+
+                if (pullDistance > 10) {
+                    const resistance = Math.min(pullDistance / MAX_PULL_DISTANCE, 1);
+                    const adjustedDistance = pullDistance * (1 - resistance * 0.5);
+                    
+                    indicator.style.transform = `translateX(-50%) translateY(${adjustedDistance - 80}px)`;
+                    
+                    if (pullDistance > 30) {
+                        indicator.classList.add('visible');
+                    }
+
+                    if (pullDistance >= PULL_THRESHOLD) {
+                        text.textContent = 'Suelta para actualizar';
+                        icon.style.transform = 'rotate(180deg)';
+                        icon.textContent = '↑';
+                    } else {
+                        text.textContent = 'Desliza para actualizar';
+                        icon.style.transform = 'rotate(0deg)';
+                        icon.textContent = '↓';
+                    }
+                }
+                e.preventDefault();
+            });
+
+            container.addEventListener('mouseup', async (e) => {
+                if (!isMouseDown || !canPull) return;
+
+                isMouseDown = false;
+                canPull = false;
+
+                if (pullDistance >= PULL_THRESHOLD && !isRefreshing) {
+                    isRefreshing = true;
+                    indicator.classList.add('refreshing');
+                    text.textContent = 'Actualizando...';
+                    icon.textContent = '⟳';
+                    icon.style.transform = 'rotate(0deg)';
+
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        await loadData();
+                        
+                        text.textContent = '¡Actualizado!';
+                        icon.textContent = '✓';
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        
+                    } catch (error) {
+                        console.error('Error during pull to refresh:', error);
+                        text.textContent = 'Error al actualizar';
+                        icon.textContent = '✗';
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                }
+
+                indicator.style.transform = 'translateX(-50%) translateY(-80px)';
+                indicator.classList.remove('visible', 'refreshing');
+                text.textContent = 'Desliza para actualizar';
+                icon.textContent = '↓';
+                icon.style.transform = 'rotate(0deg)';
+                
+                isRefreshing = false;
+                pullDistance = 0;
+            });
+
+            // Prevent default scroll behavior during pull
+            container.addEventListener('touchmove', (e) => {
+                if (pullDistance > 10 && !isRefreshing) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             startDataChangeTimer();
+            initPullToRefresh(); // Initialize pull to refresh functionality
 
             const helpButton = document.getElementById('helpButton');
             const helpModal = document.getElementById('helpModal');
