@@ -80,7 +80,7 @@
                     <h4>🔍 Filtros y búsqueda</h4>
                     <ul>
                         <li><strong>Buscar producto:</strong> Escribe cualquier parte del nombre del producto para
-                            encontrarlo rápidamente
+                            encontrarlo rápidamente. Usa el botón ✕ para limpiar la búsqueda
                         </li>
                         <li><strong>Filtrar por Grupo:</strong> Selecciona un grupo específico (ej: Celi y Ricardo, Alba
                             y Javi) para ver solo los productos de ese grupo
@@ -88,9 +88,17 @@
                         <li><strong>Filtrar por Categoría:</strong> Filtra por tipo de producto (ej: Verduras, Lácteos,
                             Carnes)
                         </li>
-                        <li>Los números entre paréntesis muestran <strong>(comprados de total)</strong> para hacer
-                            seguimiento del progreso
+                        <li><strong>Estado de compra:</strong> Usa los botones de radio para filtrar por:
+                            <ul>
+                                <li><em>Todos</em> - Muestra todos los productos (por defecto)</li>
+                                <li><em>Comprado</em> - Solo productos ya marcados como comprados</li>
+                                <li><em>No comprado</em> - Solo productos pendientes por comprar</li>
+                            </ul>
                         </li>
+                        <li>Los números entre paréntesis muestran <strong>(comprados de total)</strong> para hacer
+                            seguimiento del progreso. Se actualizan dinámicamente según los filtros aplicados
+                        </li>
+                        <li><strong>Combinar filtros:</strong> Puedes usar múltiples filtros al mismo tiempo para búsquedas muy específicas</li>
                     </ul>
                 </div>
 
@@ -100,12 +108,13 @@
                         <li>Haz clic en el checkbox a la izquierda de cada producto para marcarlo como comprado
                         </li>
                         <li><strong>Los productos comprados se mueven automáticamente al final de la lista</strong> con
-                            una animación suave
+                            una animación suave y aparecen tachados
                         </li>
-                        <li>Si desmarcas un producto comprado, volverá al principio de la lista
+                        <li>Si desmarcas un producto comprado, volverá al principio de la lista automáticamente
                         </li>
-                        <li>Tu progreso se guarda automáticamente en el navegador
+                        <li>Tu progreso se guarda automáticamente en el navegador local
                         </li>
+                        <li>Los contadores de los filtros se actualizan inmediatamente al marcar/desmarcar productos</li>
                     </ul>
                 </div>
 
@@ -113,24 +122,57 @@
                     <h4>🎨 Colores y organización</h4>
                     <ul>
                         <li>Cada <span class="help-categoria">categoría</span> tiene un color distintivo para
-                            identificarla fácilmente
+                            identificarla fácilmente (hasta 10 colores diferentes)
                         </li>
                         <li>Cada <span class="help-grupo">grupo</span> también tiene su propio color único
+                            (hasta 10 colores diferentes)
                         </li>
-                        <li>Los productos pendientes aparecen arriba, los comprados abajo (tachados)
+                        <li><strong>Ordenación automática:</strong> Los productos pendientes aparecen siempre arriba, los comprados abajo (tachados)
                         </li>
+                        <li>Las <strong>notas adicionales</strong> aparecen en una caja amarilla distintiva cuando están disponibles</li>
+                        <li>Cada producto muestra: <em>nombre, cantidad/unidad, categoría, grupo y notas (si las hay)</em></li>
                     </ul>
                 </div>
 
                 <div class="help-section">
                     <h4>💾 Guardado automático</h4>
                     <ul>
-                        <li>Tus filtros seleccionados se guardan automáticamente
+                        <li><strong>Filtros:</strong> Todos los filtros seleccionados se guardan automáticamente y se restauran al recargar la página
                         </li>
-                        <li>Los productos marcados como comprados se mantienen al recargar la página
+                        <li><strong>Estado de compras:</strong> Los productos marcados como comprados se mantienen al recargar la página
                         </li>
-                        <li>Todo se almacena localmente en tu navegador
+                        <li><strong>Búsqueda:</strong> El texto de búsqueda también se guarda y restaura
                         </li>
+                        <li>Todo se almacena localmente en tu navegador (no se comparte con otros dispositivos)</li>
+                        <li>Los datos se mantienen hasta que limpies la caché del navegador</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>🔄 Actualización automática</h4>
+                    <ul>
+                        <li><strong>Detección de cambios:</strong> La aplicación verifica automáticamente cada 30 segundos si hay cambios en la lista de compras
+                        </li>
+                        <li>Si se detectan cambios (productos añadidos, modificados o eliminados), aparece un popup para notificarte
+                        </li>
+                        <li>Puedes elegir <em>Refrescar</em> para cargar los nuevos datos o <em>Ignorar</em> para continuar con la versión actual
+                        </li>
+                        <li>Los cambios se detectan incluso si otra persona modifica el documento Excel simultáneamente</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>📱 Consejos de uso</h4>
+                    <ul>
+                        <li><strong>Para ir de compras:</strong> Usa el filtro "No comprado" para ver solo lo que falta por comprar
+                        </li>
+                        <li><strong>Para revisar el progreso:</strong> Mantén "Todos" para ver pendientes arriba y comprados abajo
+                        </li>
+                        <li><strong>Para buscar algo específico:</strong> Combina búsqueda por texto con filtros de grupo/categoría
+                        </li>
+                        <li><strong>En dispositivos móviles:</strong> La interfaz se adapta automáticamente para una mejor experiencia táctil
+                        </li>
+                        <li><strong>Si hay problemas:</strong> Usa el botón "🔄 Reintentar" si aparece algún error de carga</li>
                     </ul>
                 </div>
             </div>
