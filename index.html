@@ -121,6 +121,8 @@
         let productoColumnIndex = -1;
         let purchasedItems = new Set();
         let currentSort = { column: -1, direction: 'asc' };
+        let checkInterval = null;
+        let lastDataHash = null;
 
         // Paletas de colores para categorías y grupos
         const colorPalettes = {
@@ -806,6 +808,9 @@
                 originalData = data;
                 currentData = data;
 
+                // Establecer hash inicial para detectar cambios futuros
+                lastDataHash = generateDataHash(data);
+
                 // Resetear ordenación
                 currentSort = { column: -1, direction: 'asc' };
 
@@ -831,27 +836,173 @@
             }
         }
 
-        // Cargar datos cuando la página esté lista
-        document.addEventListener('DOMContentLoaded', loadData);
+        // Función para generar hash de los datos para detectar cambios
+        function generateDataHash(data) {
+            return btoa(JSON.stringify(data)).slice(0, 20);
+        }
 
-        // Manejar apertura y cierre del modal de ayuda
-        const helpButton = document.getElementById('helpButton');
-        const helpModal = document.getElementById('helpModal');
-        const closeHelp = document.getElementById('closeHelp');
+        // Función para mostrar popup de cambios detectados
+        function showChangesDetectedPopup() {
+            // Crear overlay del popup
+            const overlay = document.createElement('div');
+            overlay.id = 'changesOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(5px);
+                z-index: 2000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            `;
 
-        helpButton.addEventListener('click', () => {
-            helpModal.style.display = 'block';
-        });
+            // Crear contenido del popup
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+                background: linear-gradient(145deg, #ffffff, #f8f9fa);
+                border-radius: 16px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                padding: 30px;
+                max-width: 400px;
+                width: 100%;
+                text-align: center;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
 
-        closeHelp.addEventListener('click', () => {
-            helpModal.style.display = 'none';
-        });
+            popup.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 16px;">🔄</div>
+                <h3 style="color: #2c3e50; margin: 0 0 16px; font-size: 1.4rem;">¡Cambios detectados!</h3>
+                <p style="color: #495057; margin: 0 0 24px; line-height: 1.5;">
+                    Se han detectado cambios en la lista de compras. 
+                    Haz clic en "Refrescar" para cargar los nuevos datos.
+                </p>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <button id="dismissChanges" style="
+                        background: #6c757d;
+                        color: white;
+                        border: none;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        transition: all 0.3s ease;
+                    ">Ignorar</button>
+                    <button id="refreshPage" style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border: none;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                    ">Refrescar</button>
+                </div>
+            `;
 
-        // Cerrar modal de ayuda si se hace clic fuera del contenido
-        window.addEventListener('click', (event) => {
-            if (event.target === helpModal) {
-                helpModal.style.display = 'none';
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+
+            // Event listeners para los botones
+            document.getElementById('dismissChanges').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+            });
+
+            document.getElementById('refreshPage').addEventListener('click', () => {
+                location.reload();
+            });
+
+            // Efecto hover para los botones
+            const buttons = popup.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    button.style.transform = 'translateY(-2px)';
+                });
+                button.addEventListener('mouseleave', () => {
+                    button.style.transform = 'translateY(0)';
+                });
+            });
+        }
+
+        // Función para verificar cambios en los datos
+        async function checkForDataChanges() {
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    console.log('Error al verificar cambios:', response.status);
+                    return;
+                }
+
+                const csvText = await response.text();
+                const newData = parseCSV(csvText);
+                const newDataHash = generateDataHash(newData);
+
+                // Si hay un hash previo y es diferente, mostrar popup
+                if (lastDataHash && lastDataHash !== newDataHash) {
+                    console.log('Cambios detectados en los datos');
+                    showChangesDetectedPopup();
+                    // Detener el temporizador para evitar múltiples popups
+                    if (checkInterval) {
+                        clearInterval(checkInterval);
+                        checkInterval = null;
+                    }
+                }
+
+                // Actualizar el hash para futuras comparaciones
+                lastDataHash = newDataHash;
+
+            } catch (error) {
+                console.log('Error al verificar cambios:', error);
             }
+        }
+
+        // Función para iniciar el temporizador de verificación
+        function startDataChangeTimer() {
+            // Verificar cada 30 segundos
+            checkInterval = setInterval(checkForDataChanges, 30000);
+            console.log('Temporizador de verificación de cambios iniciado (cada 30s)');
+        }
+
+        // Función para detener el temporizador
+        function stopDataChangeTimer() {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+                console.log('Temporizador de verificación detenido');
+            }
+        }
+
+        // Cargar datos cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            startDataChangeTimer(); // Iniciar el temporizador al cargar
+            
+            // Manejar apertura y cierre del modal de ayuda
+            const helpButton = document.getElementById('helpButton');
+            const helpModal = document.getElementById('helpModal');
+            const closeHelp = document.getElementById('closeHelp');
+
+            helpButton.addEventListener('click', () => {
+                helpModal.style.display = 'block';
+            });
+
+            closeHelp.addEventListener('click', () => {
+                helpModal.style.display = 'none';
+            });
+
+            // Cerrar modal de ayuda si se hace clic fuera del contenido
+            window.addEventListener('click', (event) => {
+                if (event.target === helpModal) {
+                    helpModal.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>
