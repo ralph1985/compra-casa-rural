@@ -51,6 +51,62 @@
         let purchasedItems = new Set();
         let currentSort = { column: -1, direction: 'asc' };
 
+        // Paletas de colores para categorías y grupos
+        const colorPalettes = {
+            categoria: [
+                { bg: '#e3f2fd', text: '#1565c0', border: '#2196f3' }, // Azul
+                { bg: '#f3e5f5', text: '#7b1fa2', border: '#9c27b0' }, // Púrpura
+                { bg: '#e8f5e8', text: '#2e7d32', border: '#4caf50' }, // Verde
+                { bg: '#fff3e0', text: '#ef6c00', border: '#ff9800' }, // Naranja
+                { bg: '#fce4ec', text: '#c2185b', border: '#e91e63' }, // Rosa
+                { bg: '#e0f2f1', text: '#00695c', border: '#009688' }, // Teal
+                { bg: '#f9fbe7', text: '#827717', border: '#cddc39' }, // Lima
+                { bg: '#e1f5fe', text: '#0277bd', border: '#03a9f4' }, // Azul claro
+                { bg: '#fff8e1', text: '#f57f17', border: '#ffeb3b' }, // Amarillo
+                { bg: '#efebe9', text: '#5d4037', border: '#795548' }  // Marrón
+            ],
+            grupo: [
+                { bg: '#ffebee', text: '#c62828', border: '#f44336' }, // Rojo
+                { bg: '#e8eaf6', text: '#303f9f', border: '#3f51b5' }, // Índigo
+                { bg: '#e4f4fd', text: '#1976d2', border: '#2196f3' }, // Azul material
+                { bg: '#e0f7fa', text: '#00838f', border: '#00bcd4' }, // Cian
+                { bg: '#f1f8e9', text: '#558b2f', border: '#8bc34a' }, // Verde claro
+                { bg: '#fff9c4', text: '#f9a825', border: '#ffc107' }, // Ámbar
+                { bg: '#fbe9e7', text: '#d84315', border: '#ff5722' }, // Naranja profundo
+                { bg: '#f3e5f5', text: '#8e24aa', border: '#9c27b0' }, // Púrpura material
+                { bg: '#e8f5e8', text: '#388e3c', border: '#4caf50' }, // Verde material
+                { bg: '#ede7f6', text: '#512da8', border: '#673ab7' }  // Violeta profundo
+            ]
+        };
+
+        // Mapas para almacenar colores asignados
+        let categoriaColors = new Map();
+        let grupoColors = new Map();
+
+        // Función para asignar color a una categoría
+        function getCategoriaColor(categoria) {
+            if (!categoria) return null;
+
+            if (!categoriaColors.has(categoria)) {
+                const colorIndex = categoriaColors.size % colorPalettes.categoria.length;
+                categoriaColors.set(categoria, colorPalettes.categoria[colorIndex]);
+            }
+
+            return categoriaColors.get(categoria);
+        }
+
+        // Función para asignar color a un grupo
+        function getGrupoColor(grupo) {
+            if (!grupo) return null;
+
+            if (!grupoColors.has(grupo)) {
+                const colorIndex = grupoColors.size % colorPalettes.grupo.length;
+                grupoColors.set(grupo, colorPalettes.grupo[colorIndex]);
+            }
+
+            return grupoColors.get(grupo);
+        }
+
         // Cargar estado de localStorage
         function loadPurchasedState() {
             const saved = localStorage.getItem('purchasedItems');
@@ -414,6 +470,24 @@
                 // Aplicar clase de comprado si está marcado
                 if (purchasedItems.has(rowId)) {
                     card.classList.add('purchased');
+                }
+
+                // Asignar colores a categorías y grupos
+                const categoriaColor = getCategoriaColor(row[indices.categoria]);
+                const grupoColor = getGrupoColor(row[indices.grupo]);
+
+                if (categoriaColor) {
+                    const { bg, text, border } = categoriaColor;
+                    categoria.style.backgroundColor = bg;
+                    categoria.style.color = text;
+                    categoria.style.borderColor = border;
+                }
+
+                if (grupoColor) {
+                    const { bg, text, border } = grupoColor;
+                    grupo.style.backgroundColor = bg;
+                    grupo.style.color = text;
+                    grupo.style.borderColor = border;
                 }
 
                 itemsContainer.appendChild(card);
