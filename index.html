@@ -17,6 +17,9 @@
         // URL del endpoint de Google Apps Script
         const ENDPOINT = "https://script.google.com/macros/s/AKfycbwJFV6LQvH8I23pxW8-IwYHyDBL57oJ1K-VlWYZCWTfHY2oGnaplPlg5dxjfYJQFuV6/exec";
 
+        // Función para crear URL con proxy CORS
+        const getProxyUrl = (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`;
+
         class AppCompraRural extends LitElement {
             static properties = {
                 data: { type: Array },
@@ -141,7 +144,7 @@
             async loadData() {
                 this.loading = true;
                 try {
-                    const response = await fetch(ENDPOINT);
+                    const response = await fetch(getProxyUrl(ENDPOINT));
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -171,15 +174,12 @@
 
                 this.loading = true;
                 try {
-                    // Usar FormData para evitar preflight CORS
-                    const postData = new FormData();
-                    postData.append('nombre', data.nombre);
-                    postData.append('producto', data.producto);
-                    postData.append('cantidad', data.cantidad);
-
-                    const response = await fetch(ENDPOINT, {
+                    const response = await fetch(getProxyUrl(ENDPOINT), {
                         method: 'POST',
-                        body: postData
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
                     });
 
                     if (!response.ok) {
