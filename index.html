@@ -64,6 +64,35 @@
             localStorage.setItem('purchasedItems', JSON.stringify([...purchasedItems]));
         }
 
+        // Cargar filtros guardados de localStorage
+        function loadFiltersState() {
+            const savedGrupo = localStorage.getItem('grupoFilter');
+            const savedCategoria = localStorage.getItem('categoriaFilter');
+            
+            if (savedGrupo) {
+                const grupoSelect = document.getElementById('grupoFilter');
+                if (grupoSelect) {
+                    grupoSelect.value = savedGrupo;
+                }
+            }
+            
+            if (savedCategoria) {
+                const categoriaSelect = document.getElementById('categoriaFilter');
+                if (categoriaSelect) {
+                    categoriaSelect.value = savedCategoria;
+                }
+            }
+        }
+
+        // Guardar filtros en localStorage
+        function saveFiltersState() {
+            const grupoFilter = document.getElementById('grupoFilter').value;
+            const categoriaFilter = document.getElementById('categoriaFilter').value;
+            
+            localStorage.setItem('grupoFilter', grupoFilter);
+            localStorage.setItem('categoriaFilter', categoriaFilter);
+        }
+
         // Generar ID único para cada fila basado en su contenido
         function generateRowId(row) {
             return btoa(row.join('|')).replace(/[^a-zA-Z0-9]/g, '');
@@ -201,9 +230,18 @@
                 categoriaSelect.appendChild(option);
             });
 
-            // Agregar event listeners
-            grupoSelect.addEventListener('change', filterData);
-            categoriaSelect.addEventListener('change', filterData);
+            // Cargar filtros guardados
+            loadFiltersState();
+
+            // Agregar event listeners que también guarden el estado
+            grupoSelect.addEventListener('change', () => {
+                saveFiltersState();
+                filterData();
+            });
+            categoriaSelect.addEventListener('change', () => {
+                saveFiltersState();
+                filterData();
+            });
         }
 
         // Función para filtrar datos
@@ -416,8 +454,15 @@
                 // Poblar filtros
                 populateFilters(data);
                 
-                // Crear tabla
-                createTable(data);
+                // Aplicar filtros guardados si existen
+                const savedGrupo = localStorage.getItem('grupoFilter');
+                const savedCategoria = localStorage.getItem('categoriaFilter');
+                
+                if (savedGrupo || savedCategoria) {
+                    filterData();
+                } else {
+                    createTable(data);
+                }
 
             } catch (error) {
                 console.error('Error loading data:', error);
