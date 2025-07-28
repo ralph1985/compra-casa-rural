@@ -215,37 +215,64 @@ body {
     background-color: #e9ecef;
 }
 
+/* Estilos para mensaje de sin resultados */
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.no-results-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.no-results-message {
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.no-results-suggestion {
+    font-size: 14px;
+    color: #6c757d;
+    font-style: italic;
+}
+
 /* Responsivo para móviles */
 @media (max-width: 768px) {
     .item-card {
         padding: 12px;
     }
-    
+
     .card-left {
         padding-right: 12px;
     }
-    
+
     .purchase-checkbox {
         width: 18px;
         height: 18px;
     }
-    
+
     .producto {
         font-size: 15px;
     }
-    
+
     .cantidad-unidad {
         font-size: 13px;
     }
-    
+
     .line-2 {
         font-size: 13px;
     }
-    
-    .categoria, .grupo {
+
+    .categoria,
+    .grupo {
         font-size: 11px;
     }
-    
+
     .notas {
         font-size: 12px;
     }
@@ -257,7 +284,7 @@ body {
         align-items: flex-start;
         gap: 6px;
     }
-    
+
     .cantidad-unidad {
         align-self: flex-end;
     }

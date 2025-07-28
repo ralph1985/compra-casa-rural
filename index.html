@@ -68,14 +68,14 @@
         function loadFiltersState() {
             const savedGrupo = localStorage.getItem('grupoFilter');
             const savedCategoria = localStorage.getItem('categoriaFilter');
-            
+
             if (savedGrupo) {
                 const grupoSelect = document.getElementById('grupoFilter');
                 if (grupoSelect) {
                     grupoSelect.value = savedGrupo;
                 }
             }
-            
+
             if (savedCategoria) {
                 const categoriaSelect = document.getElementById('categoriaFilter');
                 if (categoriaSelect) {
@@ -88,7 +88,7 @@
         function saveFiltersState() {
             const grupoFilter = document.getElementById('grupoFilter').value;
             const categoriaFilter = document.getElementById('categoriaFilter').value;
-            
+
             localStorage.setItem('grupoFilter', grupoFilter);
             localStorage.setItem('categoriaFilter', categoriaFilter);
         }
@@ -101,7 +101,7 @@
         // Manejar cambio de estado de compra
         function handlePurchaseToggle(checkbox, rowId) {
             const card = checkbox.closest('.item-card');
-            
+
             if (checkbox.checked) {
                 purchasedItems.add(rowId);
                 card.classList.add('purchased');
@@ -109,7 +109,7 @@
                 purchasedItems.delete(rowId);
                 card.classList.remove('purchased');
             }
-            
+
             savePurchasedState();
         }
 
@@ -188,7 +188,7 @@
             if (data.length === 0) return;
 
             const headers = data[0];
-            
+
             // Encontrar índices de las columnas
             grupoColumnIndex = headers.indexOf('Grupo');
             categoriaColumnIndex = headers.indexOf('Categoría');
@@ -277,7 +277,7 @@
             }
 
             currentData = filteredData;
-            
+
             // Aplicar ordenación actual si existe
             if (currentSort.column >= 0) {
                 sortData(currentSort.column, currentSort.direction);
@@ -295,6 +295,23 @@
 
             if (data.length === 0) {
                 showError('No hay datos disponibles');
+                return;
+            }
+
+            // Verificar si hay datos después de los headers
+            if (data.length === 1) {
+                // Solo hay headers, no hay datos que mostrar
+                const noResultsDiv = document.createElement('div');
+                noResultsDiv.className = 'no-results';
+                noResultsDiv.innerHTML = `
+                    <div class="no-results-icon">🔍</div>
+                    <div class="no-results-message">No se encontraron resultados</div>
+                    <div class="no-results-suggestion">Prueba a cambiar los filtros para ver más elementos</div>
+                `;
+                itemsContainer.appendChild(noResultsDiv);
+
+                hideLoading();
+                itemsContainer.style.display = 'block';
                 return;
             }
 
@@ -316,89 +333,89 @@
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
                 const rowId = generateRowId(row);
-                
+
                 // Crear contenedor de tarjeta
                 const card = document.createElement('div');
                 card.className = 'item-card';
                 card.setAttribute('data-row-id', rowId);
-                
+
                 // Contenedor izquierdo para checkbox
                 const leftSection = document.createElement('div');
                 leftSection.className = 'card-left';
-                
+
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.className = 'purchase-checkbox';
                 checkbox.checked = purchasedItems.has(rowId);
                 checkbox.addEventListener('change', () => handlePurchaseToggle(checkbox, rowId));
                 leftSection.appendChild(checkbox);
-                
+
                 // Contenedor derecho para información
                 const rightSection = document.createElement('div');
                 rightSection.className = 'card-right';
-                
+
                 // Primera línea: Producto, Cantidad, Unidad
                 const line1 = document.createElement('div');
                 line1.className = 'card-line line-1';
-                
+
                 const producto = document.createElement('span');
                 producto.className = 'producto';
                 producto.textContent = row[indices.producto] || '';
-                
+
                 const cantidadUnidad = document.createElement('span');
                 cantidadUnidad.className = 'cantidad-unidad';
                 const cantidad = row[indices.cantidad] || '';
                 const unidad = row[indices.unidad] || '';
                 cantidadUnidad.textContent = cantidad + (unidad ? ` ${unidad}` : '');
-                
+
                 line1.appendChild(producto);
                 line1.appendChild(cantidadUnidad);
-                
+
                 // Segunda línea: Categoría y Grupo
                 const line2 = document.createElement('div');
                 line2.className = 'card-line line-2';
-                
+
                 const categoria = document.createElement('span');
                 categoria.className = 'categoria';
                 categoria.textContent = row[indices.categoria] || '';
-                
+
                 const grupo = document.createElement('span');
                 grupo.className = 'grupo';
                 grupo.textContent = row[indices.grupo] || '';
-                
+
                 line2.appendChild(categoria);
                 line2.appendChild(grupo);
-                
+
                 // Tercera línea: Notas (solo si hay contenido)
                 const notasContent = row[indices.notas] || '';
                 let line3 = null;
                 if (notasContent.trim()) {
                     line3 = document.createElement('div');
                     line3.className = 'card-line line-3';
-                    
+
                     const notas = document.createElement('span');
                     notas.className = 'notas';
                     notas.textContent = notasContent;
-                    
+
                     line3.appendChild(notas);
                 }
-                
+
                 // Agregar líneas al contenedor derecho
                 rightSection.appendChild(line1);
                 rightSection.appendChild(line2);
                 if (line3) {
                     rightSection.appendChild(line3);
                 }
-                
+
                 // Agregar secciones a la tarjeta
                 card.appendChild(leftSection);
                 card.appendChild(rightSection);
-                
+
                 // Aplicar clase de comprado si está marcado
                 if (purchasedItems.has(rowId)) {
                     card.classList.add('purchased');
                 }
-                
+
                 itemsContainer.appendChild(card);
             }
 
@@ -440,24 +457,24 @@
 
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
-                
+
                 // Guardar datos originales
                 originalData = data;
                 currentData = data;
-                
+
                 // Resetear ordenación
                 currentSort = { column: -1, direction: 'asc' };
-                
+
                 // Cargar estado de compras
                 loadPurchasedState();
-                
+
                 // Poblar filtros
                 populateFilters(data);
-                
+
                 // Aplicar filtros guardados si existen
                 const savedGrupo = localStorage.getItem('grupoFilter');
                 const savedCategoria = localStorage.getItem('categoriaFilter');
-                
+
                 if (savedGrupo || savedCategoria) {
                     filterData();
                 } else {
