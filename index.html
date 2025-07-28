@@ -48,12 +48,12 @@
                             <span>Todos</span>
                         </label>
                         <label class="radio-label">
-                            <input type="radio" name="estadoFilter" value="comprado">
-                            <span>Comprado</span>
-                        </label>
-                        <label class="radio-label">
                             <input type="radio" name="estadoFilter" value="no-comprado">
                             <span>No comprado</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="estadoFilter" value="comprado">
+                            <span>Comprado</span>
                         </label>
                     </div>
                 </div>
@@ -866,26 +866,44 @@
         // Manejar cambio de estado de compra
         function handlePurchaseToggle(checkbox, rowId) {
             const card = checkbox.closest('.item-card');
-            const wasChecked = !checkbox.checked; // Estado anterior
 
             if (checkbox.checked) {
                 purchasedItems.add(rowId);
                 card.classList.add('purchased');
-                // Mover al final con animación
-                moveElementToPosition(card, true);
             } else {
                 purchasedItems.delete(rowId);
                 card.classList.remove('purchased');
-                // Mover al principio con animación
-                moveElementToPosition(card, false);
             }
 
             savePurchasedState();
 
+            // Verificar el filtro actual de estado de compra
+            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
+            
+            // Si estamos filtrando por un estado específico y el producto ya no cumple el criterio,
+            // debemos re-filtrar los datos inmediatamente para que desaparezca/aparezca
+            if (estadoFilter === 'no-comprado' && checkbox.checked) {
+                // El producto fue marcado como comprado pero estamos viendo solo "no comprado"
+                // Debe desaparecer de la vista
+                filterData();
+            } else if (estadoFilter === 'comprado' && !checkbox.checked) {
+                // El producto fue desmarcado pero estamos viendo solo "comprado"
+                // Debe desaparecer de la vista
+                filterData();
+            } else {
+                // En cualquier otro caso (filtro "todos" o el producto sigue cumpliendo el criterio)
+                // Solo necesitamos mover el elemento con animación
+                if (checkbox.checked) {
+                    moveElementToPosition(card, true);
+                } else {
+                    moveElementToPosition(card, false);
+                }
+            }
+
             // Actualizar los filtros para reflejar los nuevos conteos
             setTimeout(() => {
-                populateFilters(originalData);
-            }, 350);
+                updateFiltersBasedOnSelection();
+            }, 100);
         }
 
         // Función para mostrar loading
