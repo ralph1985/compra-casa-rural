@@ -660,6 +660,26 @@
             }, 350);
         }
 
+        // Función para mostrar loading
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('itemsContainer').style.display = 'none';
+        }
+
+        // Función para ocultar loading
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Función para mostrar error
+        function showError(message) {
+            hideLoading();
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
         // Función para cargar datos
         async function loadData() {
             showLoading();
