@@ -128,7 +128,6 @@ body {
     }
 }
 
-/* Estilos para el contenedor de búsqueda */
 .search-input-container {
     position: relative;
     display: flex;
@@ -187,7 +186,6 @@ body {
     transform: scale(0.95);
 }
 
-/* Estilos para el contenedor de tarjetas */
 .items-container {
     display: flex;
     flex-direction: column;
@@ -198,7 +196,6 @@ body {
     padding-bottom: 80px;
 }
 
-/* Scrollbar personalizado para webkit browsers */
 .items-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -217,7 +214,6 @@ body {
     background: #a1a1a1;
 }
 
-/* Estilos para cada tarjeta de producto */
 .item-card {
     display: flex;
     background: linear-gradient(145deg, #ffffff, #f8f9fa);
@@ -252,13 +248,11 @@ body {
     opacity: 1;
 }
 
-/* Animación para elementos en movimiento */
 .item-card.moving {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     z-index: 10;
 }
 
-/* Animación de entrada para nuevos elementos */
 .item-card.entering {
     animation: slideInFromSide 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     opacity: 0;
@@ -282,7 +276,6 @@ body {
     }
 }
 
-/* Sección izquierda con el checkbox */
 .card-left {
     display: flex;
     align-items: flex-start;
@@ -299,7 +292,6 @@ body {
     border-radius: 4px;
 }
 
-/* Sección derecha con el contenido */
 .card-right {
     flex: 1;
     display: flex;
@@ -307,14 +299,12 @@ body {
     gap: 6px;
 }
 
-/* Líneas de contenido */
 .card-line {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* Primera línea: Producto, Cantidad, Unidad */
 .line-1 {
     justify-content: space-between;
 }
@@ -336,7 +326,6 @@ body {
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
-/* Segunda línea: Categoría y Grupo */
 .line-2 {
     font-size: 12px;
 }
@@ -361,7 +350,6 @@ body {
     font-weight: 500;
 }
 
-/* Tercera línea: Notas */
 .line-3 {
     margin-top: 4px;
 }
@@ -377,7 +365,6 @@ body {
     box-shadow: 0 2px 8px rgba(253, 203, 110, 0.2);
 }
 
-/* Estilos para elementos comprados */
 .item-card.purchased {
     opacity: 0.7;
     background: linear-gradient(145deg, #f8f9fa, #e9ecef);
@@ -393,7 +380,6 @@ body {
     transform: scale(0.98);
 }
 
-/* Estilos para mensaje de sin resultados */
 .no-results {
     text-align: center;
     padding: 40px 20px;
@@ -422,7 +408,6 @@ body {
     font-style: italic;
 }
 
-/* Responsivo para móviles */
 @media (max-width: 768px) {
     .item-card {
         padding: 10px;
@@ -521,7 +506,6 @@ body {
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
 
-/* Botón de ayuda */
 .help-button {
     position: absolute;
     top: 12px;
@@ -550,7 +534,6 @@ body {
     font-weight: bold;
 }
 
-/* Modal de ayuda */
 .help-modal {
     position: fixed;
     top: 0;
@@ -623,7 +606,6 @@ body {
     flex: 1;
 }
 
-/* Sección de ayuda */
 .help-section {
     margin-bottom: 24px;
 }
@@ -665,7 +647,6 @@ body {
     font-size: 0.9em;
 }
 
-/* Responsive para el modal */
 @media (max-width: 768px) {
     .help-modal {
         padding: 0;
@@ -699,7 +680,6 @@ body {
     }
 }
 
-/* Estilos para el grupo de radio buttons */
 .radio-group {
     display: flex;
     gap: 8px;
@@ -733,7 +713,6 @@ body {
     font-weight: 500;
 }
 
-/* Responsive para radio buttons */
 @media (max-width: 600px) {
     .radio-group {
         gap: 6px;

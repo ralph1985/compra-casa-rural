@@ -196,10 +196,8 @@
     </div>
 
     <script>
-        // URL del CSV de Google Sheets
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
 
-        // Variables globales para almacenar datos
         let originalData = [];
         let currentData = [];
         let grupoColumnIndex = -1;
@@ -210,39 +208,36 @@
         let checkInterval = null;
         let lastDataHash = null;
 
-        // Paletas de colores para categorías y grupos
         const colorPalettes = {
             categoria: [
-                { bg: '#e3f2fd', text: '#1565c0', border: '#2196f3' }, // Azul
-                { bg: '#f3e5f5', text: '#7b1fa2', border: '#9c27b0' }, // Púrpura
-                { bg: '#e8f5e8', text: '#2e7d32', border: '#4caf50' }, // Verde
-                { bg: '#fff3e0', text: '#ef6c00', border: '#ff9800' }, // Naranja
-                { bg: '#fce4ec', text: '#c2185b', border: '#e91e63' }, // Rosa
-                { bg: '#e0f2f1', text: '#00695c', border: '#009688' }, // Teal
-                { bg: '#f9fbe7', text: '#827717', border: '#cddc39' }, // Lima
-                { bg: '#e1f5fe', text: '#0277bd', border: '#03a9f4' }, // Azul claro
-                { bg: '#fff8e1', text: '#f57f17', border: '#ffeb3b' }, // Amarillo
-                { bg: '#efebe9', text: '#5d4037', border: '#795548' }  // Marrón
+                { bg: '#e3f2fd', text: '#1565c0', border: '#2196f3' },
+                { bg: '#f3e5f5', text: '#7b1fa2', border: '#9c27b0' },
+                { bg: '#e8f5e8', text: '#2e7d32', border: '#4caf50' },
+                { bg: '#fff3e0', text: '#ef6c00', border: '#ff9800' },
+                { bg: '#fce4ec', text: '#c2185b', border: '#e91e63' },
+                { bg: '#e0f2f1', text: '#00695c', border: '#009688' },
+                { bg: '#f9fbe7', text: '#827717', border: '#cddc39' },
+                { bg: '#e1f5fe', text: '#0277bd', border: '#03a9f4' },
+                { bg: '#fff8e1', text: '#f57f17', border: '#ffeb3b' },
+                { bg: '#efebe9', text: '#5d4037', border: '#795548' }
             ],
             grupo: [
-                { bg: '#ffebee', text: '#c62828', border: '#f44336' }, // Rojo
-                { bg: '#e8eaf6', text: '#303f9f', border: '#3f51b5' }, // Índigo
-                { bg: '#e4f4fd', text: '#1976d2', border: '#2196f3' }, // Azul material
-                { bg: '#e0f7fa', text: '#00838f', border: '#00bcd4' }, // Cian
-                { bg: '#f1f8e9', text: '#558b2f', border: '#8bc34a' }, // Verde claro
-                { bg: '#fff9c4', text: '#f9a825', border: '#ffc107' }, // Ámbar
-                { bg: '#fbe9e7', text: '#d84315', border: '#ff5722' }, // Naranja profundo
-                { bg: '#f3e5f5', text: '#8e24aa', border: '#9c27b0' }, // Púrpura material
-                { bg: '#e8f5e8', text: '#388e3c', border: '#4caf50' }, // Verde material
-                { bg: '#ede7f6', text: '#512da8', border: '#673ab7' }  // Violeta profundo
+                { bg: '#ffebee', text: '#c62828', border: '#f44336' },
+                { bg: '#e8eaf6', text: '#303f9f', border: '#3f51b5' },
+                { bg: '#e4f4fd', text: '#1976d2', border: '#2196f3' },
+                { bg: '#e0f7fa', text: '#00838f', border: '#00bcd4' },
+                { bg: '#f1f8e9', text: '#558b2f', border: '#8bc34a' },
+                { bg: '#fff9c4', text: '#f9a825', border: '#ffc107' },
+                { bg: '#fbe9e7', text: '#d84315', border: '#ff5722' },
+                { bg: '#f3e5f5', text: '#8e24aa', border: '#9c27b0' },
+                { bg: '#e8f5e8', text: '#388e3c', border: '#4caf50' },
+                { bg: '#ede7f6', text: '#512da8', border: '#673ab7' }
             ]
         };
 
-        // Mapas para almacenar colores asignados
         let categoriaColors = new Map();
         let grupoColors = new Map();
 
-        // Función para asignar color a una categoría
         function getCategoriaColor(categoria) {
             if (!categoria) return null;
 
@@ -254,7 +249,6 @@
             return categoriaColors.get(categoria);
         }
 
-        // Función para asignar color a un grupo
         function getGrupoColor(grupo) {
             if (!grupo) return null;
 
@@ -266,7 +260,6 @@
             return grupoColors.get(grupo);
         }
 
-        // Cargar estado de localStorage
         function loadPurchasedState() {
             const saved = localStorage.getItem('purchasedItems');
             if (saved) {
@@ -274,12 +267,10 @@
             }
         }
 
-        // Guardar estado en localStorage
         function savePurchasedState() {
             localStorage.setItem('purchasedItems', JSON.stringify([...purchasedItems]));
         }
 
-        // Cargar filtros guardados de localStorage
         function loadFiltersState() {
             const savedGrupo = localStorage.getItem('grupoFilter');
             const savedCategoria = localStorage.getItem('categoriaFilter');
@@ -315,7 +306,6 @@
             }
         }
 
-        // Guardar filtros en localStorage
         function saveFiltersState() {
             const grupoFilter = document.getElementById('grupoFilter').value;
             const categoriaFilter = document.getElementById('categoriaFilter').value;
@@ -328,19 +318,16 @@
             localStorage.setItem('estadoFilter', estadoFilter);
         }
 
-        // Generar ID único para cada fila basado en su contenido
         function generateRowId(row) {
             return btoa(row.join('|')).replace(/[^a-zA-Z0-9]/g, '');
         }
 
-        // Función para parsear CSV
         function parseCSV(text) {
             const lines = text.split('\n');
             const result = [];
 
             for (let line of lines) {
                 if (line.trim()) {
-                    // Simple CSV parsing - handles basic cases
                     const row = line.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''));
                     result.push(row);
                 }
@@ -349,7 +336,6 @@
             return result;
         }
 
-        // Función para ordenar datos
         function sortData(columnIndex, direction = 'asc') {
             if (!currentData.length || columnIndex < 0) return;
 
@@ -371,7 +357,6 @@
             createTable(sortedData);
         }
 
-        // Función para manejar click en encabezado
         function handleHeaderClick(columnIndex, columnName) {
             const sortableColumns = ['Producto', 'Grupo', 'Categoría'];
             if (!sortableColumns.includes(columnName)) return;
@@ -386,13 +371,12 @@
             updateSortIndicators();
         }
 
-        // Función para actualizar indicadores de ordenación
         function updateSortIndicators() {
             const headers = document.querySelectorAll('#tableHeader th');
             headers.forEach((th, index) => {
                 const sortIcon = th.querySelector('.sort-icon');
                 if (sortIcon) {
-                    if (currentSort.column === index - 1) { // -1 porque el checkbox ocupa el primer índice
+                    if (currentSort.column === index - 1) {
                         sortIcon.textContent = currentSort.direction === 'asc' ? ' ▲' : ' ▼';
                         sortIcon.style.opacity = '1';
                     } else {
@@ -403,7 +387,6 @@
             });
         }
 
-        // Función para actualizar filtros dinámicamente según la selección actual
         function updateFiltersBasedOnSelection() {
             if (!originalData.length) return;
 
@@ -412,20 +395,16 @@
             const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
             const headers = originalData[0];
 
-            // Obtener datos filtrados para calcular opciones disponibles
-            let availableData = originalData.slice(1); // Sin headers
+            let availableData = originalData.slice(1);
 
-            // Si hay filtro de grupo, filtrar primero por grupo
             if (grupoFilter && grupoColumnIndex !== -1) {
                 availableData = availableData.filter(row => row[grupoColumnIndex] === grupoFilter);
             }
 
-            // Si hay filtro de categoría, filtrar por categoría
             if (categoriaFilter && categoriaColumnIndex !== -1) {
                 availableData = availableData.filter(row => row[categoriaColumnIndex] === categoriaFilter);
             }
 
-            // Filtrar por estado de compra
             if (estadoFilter === 'comprado') {
                 availableData = availableData.filter(row => {
                     const rowId = generateRowId(row);
@@ -438,7 +417,6 @@
                 });
             }
 
-            // Calcular estadísticas para grupos disponibles
             const grupos = new Map();
             const categorias = new Map();
 
@@ -467,14 +445,11 @@
                 }
             });
 
-            // Actualizar selector de grupos
             const grupoSelect = document.getElementById('grupoFilter');
             const currentGrupoValue = grupoSelect.value;
             grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
 
-            // Si no hay filtro de categoría, mostrar todos los grupos originales
             if (!categoriaFilter) {
-                // Recalcular con todos los datos originales para grupos
                 const allGrupos = new Map();
                 for (let i = 1; i < originalData.length; i++) {
                     const row = originalData[i];
@@ -499,7 +474,6 @@
                     grupoSelect.appendChild(option);
                 });
             } else {
-                // Mostrar solo grupos que tienen la categoría seleccionada
                 grupos.forEach((stats, grupo) => {
                     const option = document.createElement('option');
                     option.value = grupo;
@@ -510,14 +484,11 @@
 
             grupoSelect.value = currentGrupoValue;
 
-            // Actualizar selector de categorías
             const categoriaSelect = document.getElementById('categoriaFilter');
             const currentCategoriaValue = categoriaSelect.value;
             categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
 
-            // Si no hay filtro de grupo, mostrar todas las categorías originales
             if (!grupoFilter) {
-                // Recalcular con todos los datos originales para categorías
                 const allCategorias = new Map();
                 for (let i = 1; i < originalData.length; i++) {
                     const row = originalData[i];
@@ -542,7 +513,6 @@
                     categoriaSelect.appendChild(option);
                 });
             } else {
-                // Mostrar solo categorías que tienen el grupo seleccionado
                 categorias.forEach((stats, categoria) => {
                     const option = document.createElement('option');
                     option.value = categoria;
@@ -554,26 +524,20 @@
             categoriaSelect.value = currentCategoriaValue;
         }
 
-        // Función para poblar los filtros
         function populateFilters(data) {
             if (data.length === 0) return;
 
             const headers = data[0];
 
-            // Encontrar índices de las columnas
             grupoColumnIndex = headers.indexOf('Grupo');
             categoriaColumnIndex = headers.indexOf('Categoría');
             productoColumnIndex = headers.indexOf('Producto');
 
             if (grupoColumnIndex === -1 && categoriaColumnIndex === -1) return;
 
-            // Actualizar filtros dinámicamente
             updateFiltersBasedOnSelection();
-
-            // Cargar filtros guardados
             loadFiltersState();
 
-            // Agregar event listeners que también guarden el estado y actualicen filtros
             const grupoSelect = document.getElementById('grupoFilter');
             const categoriaSelect = document.getElementById('categoriaFilter');
             const productoSearchInput = document.getElementById('productoSearch');
@@ -591,13 +555,11 @@
                 filterData();
             });
 
-            // Event listener para búsqueda de producto
             productoSearchInput.addEventListener('input', () => {
                 saveFiltersState();
                 filterData();
             });
 
-            // Event listener para botón de limpiar búsqueda
             clearSearchButton.addEventListener('click', () => {
                 productoSearchInput.value = '';
                 saveFiltersState();
@@ -605,7 +567,6 @@
                 productoSearchInput.focus();
             });
 
-            // Event listeners para los radio buttons de estado de compra
             const estadoRadios = document.querySelectorAll('input[name="estadoFilter"]');
             estadoRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
@@ -616,7 +577,6 @@
             });
         }
 
-        // Función para filtrar datos
         function filterData() {
             const grupoFilter = document.getElementById('grupoFilter').value;
             const categoriaFilter = document.getElementById('categoriaFilter').value;
@@ -625,27 +585,24 @@
 
             if (!originalData.length) return;
 
-            let filteredData = [originalData[0]]; // Mantener headers
+            let filteredData = [originalData[0]];
 
             for (let i = 1; i < originalData.length; i++) {
                 const row = originalData[i];
                 let showRow = true;
 
-                // Filtrar por grupo
                 if (grupoFilter && grupoColumnIndex !== -1) {
                     if (row[grupoColumnIndex] !== grupoFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtrar por categoría
                 if (categoriaFilter && categoriaColumnIndex !== -1) {
                     if (row[categoriaColumnIndex] !== categoriaFilter) {
                         showRow = false;
                     }
                 }
 
-                // Filtrar por búsqueda de producto
                 if (productoSearch && productoColumnIndex !== -1) {
                     const producto = (row[productoColumnIndex] || '').toLowerCase();
                     if (!producto.includes(productoSearch)) {
@@ -653,7 +610,6 @@
                     }
                 }
 
-                // Filtrar por estado de compra
                 if (estadoFilter === 'comprado') {
                     const rowId = generateRowId(row);
                     if (!purchasedItems.has(rowId)) {
@@ -673,25 +629,21 @@
 
             currentData = filteredData;
 
-            // Aplicar ordenación actual si existe
             if (currentSort.column >= 0) {
                 sortData(currentSort.column, currentSort.direction);
             } else {
                 createTable(filteredData);
             }
 
-            // Resetear scroll al inicio después de filtrar
             const itemsContainer = document.getElementById('itemsContainer');
             if (itemsContainer) {
                 itemsContainer.scrollTop = 0;
             }
         }
 
-        // Función para crear la vista de tarjetas
         function createTable(data) {
             const itemsContainer = document.getElementById('itemsContainer');
 
-            // Limpiar contenido anterior
             itemsContainer.innerHTML = '';
 
             if (data.length === 0) {
@@ -699,9 +651,7 @@
                 return;
             }
 
-            // Verificar si hay datos después de los headers
             if (data.length === 1) {
-                // Solo hay headers, no hay datos que mostrar
                 const noResultsDiv = document.createElement('div');
                 noResultsDiv.className = 'no-results';
                 noResultsDiv.innerHTML = `
@@ -716,11 +666,9 @@
                 return;
             }
 
-            // Guardar datos actuales
             currentData = data;
             const headers = data[0];
 
-            // Encontrar índices de columnas
             const indices = {
                 producto: headers.indexOf('Producto'),
                 cantidad: headers.indexOf('Cantidad'),
@@ -730,7 +678,6 @@
                 notas: headers.indexOf('Notas')
             };
 
-            // Separar elementos comprados y no comprados
             const dataRows = data.slice(1);
             const notPurchased = [];
             const purchased = [];
@@ -744,19 +691,15 @@
                 }
             });
 
-            // Crear tarjetas ordenadas: primero no comprados, luego comprados
             const orderedRows = [...notPurchased, ...purchased];
 
-            // Crear tarjetas de datos
             orderedRows.forEach((row, index) => {
                 const rowId = generateRowId(row);
 
-                // Crear contenedor de tarjeta
                 const card = document.createElement('div');
                 card.className = 'item-card';
                 card.setAttribute('data-row-id', rowId);
 
-                // Contenedor izquierdo para checkbox
                 const leftSection = document.createElement('div');
                 leftSection.className = 'card-left';
 
@@ -767,11 +710,9 @@
                 checkbox.addEventListener('change', () => handlePurchaseToggle(checkbox, rowId));
                 leftSection.appendChild(checkbox);
 
-                // Contenedor derecho para información
                 const rightSection = document.createElement('div');
                 rightSection.className = 'card-right';
 
-                // Primera línea: Producto, Cantidad, Unidad
                 const line1 = document.createElement('div');
                 line1.className = 'card-line line-1';
 
@@ -788,7 +729,6 @@
                 line1.appendChild(producto);
                 line1.appendChild(cantidadUnidad);
 
-                // Segunda línea: Categoría y Grupo
                 const line2 = document.createElement('div');
                 line2.className = 'card-line line-2';
 
@@ -803,7 +743,6 @@
                 line2.appendChild(categoria);
                 line2.appendChild(grupo);
 
-                // Tercera línea: Notas (solo si hay contenido)
                 const notasContent = row[indices.notas] || '';
                 let line3 = null;
                 if (notasContent.trim()) {
@@ -817,23 +756,19 @@
                     line3.appendChild(notas);
                 }
 
-                // Agregar líneas al contenedor derecho
                 rightSection.appendChild(line1);
                 rightSection.appendChild(line2);
                 if (line3) {
                     rightSection.appendChild(line3);
                 }
 
-                // Agregar secciones a la tarjeta
                 card.appendChild(leftSection);
                 card.appendChild(rightSection);
 
-                // Aplicar clase de comprado si está marcado
                 if (purchasedItems.has(rowId)) {
                     card.classList.add('purchased');
                 }
 
-                // Asignar colores a categorías y grupos
                 const categoriaColor = getCategoriaColor(row[indices.categoria]);
                 const grupoColor = getGrupoColor(row[indices.grupo]);
 
@@ -854,14 +789,11 @@
                 itemsContainer.appendChild(card);
             });
 
-            // Mostrar contenedor de tarjetas
             hideLoading();
             itemsContainer.style.display = 'block';
         }
 
-        // Función para mover elemento con animación
         function moveElementToPosition(element, isMovingToEnd) {
-            // Añadir clase de animación
             element.classList.add('moving');
 
             if (isMovingToEnd) {
@@ -872,14 +804,11 @@
                 element.style.opacity = '0.3';
             }
 
-            // Después de la animación, reordenar la lista
             setTimeout(() => {
-                // Recrear la tabla con el nuevo orden
                 createTable(currentData);
             }, 300);
         }
 
-        // Manejar cambio de estado de compra
         function handlePurchaseToggle(checkbox, rowId) {
             const card = checkbox.closest('.item-card');
 
@@ -893,22 +822,13 @@
 
             savePurchasedState();
 
-            // Verificar el filtro actual de estado de compra
             const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
 
-            // Si estamos filtrando por un estado específico y el producto ya no cumple el criterio,
-            // debemos re-filtrar los datos inmediatamente para que desaparezca/aparezca
             if (estadoFilter === 'no-comprado' && checkbox.checked) {
-                // El producto fue marcado como comprado pero estamos viendo solo "no comprado"
-                // Debe desaparecer de la vista
                 filterData();
             } else if (estadoFilter === 'comprado' && !checkbox.checked) {
-                // El producto fue desmarcado pero estamos viendo solo "comprado"
-                // Debe desaparecer de la vista
                 filterData();
             } else {
-                // En cualquier otro caso (filtro "todos" o el producto sigue cumpliendo el criterio)
-                // Solo necesitamos mover el elemento con animación
                 if (checkbox.checked) {
                     moveElementToPosition(card, true);
                 } else {
@@ -916,32 +836,27 @@
                 }
             }
 
-            // Actualizar los filtros para reflejar los nuevos conteos
             setTimeout(() => {
                 updateFiltersBasedOnSelection();
             }, 100);
         }
 
-        // Función para mostrar loading
         function showLoading() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('error').style.display = 'none';
             document.getElementById('itemsContainer').style.display = 'none';
         }
 
-        // Función para ocultar loading
         function hideLoading() {
             document.getElementById('loading').style.display = 'none';
         }
 
-        // Función para mostrar error
         function showError(message) {
             hideLoading();
             const errorDiv = document.getElementById('error');
             errorDiv.querySelector('.error-message').textContent = message;
             errorDiv.style.display = 'block';
 
-            // Añadir event listener al botón de reintentar si no existe ya
             const retryButton = document.getElementById('retryButton');
             if (retryButton && !retryButton.hasAttribute('data-listener-added')) {
                 retryButton.addEventListener('click', () => {
@@ -952,12 +867,10 @@
             }
         }
 
-        // Función para cargar datos
         async function loadData() {
             showLoading();
 
             try {
-                // Añadir timestamp para evitar cache
                 const timestamp = new Date().getTime();
                 const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
                 const response = await fetch(urlWithCache);
@@ -969,30 +882,22 @@
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
 
-                // Guardar datos originales
                 originalData = data;
                 currentData = data;
 
-                // Establecer hash inicial para detectar cambios futuros
                 lastDataHash = generateDataHash(data);
 
-                // Resetear ordenación
                 currentSort = { column: -1, direction: 'asc' };
 
-                // Cargar estado de compras
                 loadPurchasedState();
 
-                // Poblar filtros
                 populateFilters(data);
 
-                // Cargar filtros guardados y aplicarlos
                 loadFiltersState();
 
-                // Actualizar contadores después de cargar filtros guardados
                 setTimeout(() => {
                     updateFiltersBasedOnSelection();
 
-                    // Aplicar filtros guardados si existen
                     const savedGrupo = localStorage.getItem('grupoFilter');
                     const savedCategoria = localStorage.getItem('categoriaFilter');
                     const savedProductoSearch = localStorage.getItem('productoSearch');
@@ -1010,21 +915,18 @@
             }
         }
 
-        // Función para generar hash de los datos para detectar cambios
         function generateDataHash(data) {
             const jsonString = JSON.stringify(data);
             let hash = 0;
             for (let i = 0; i < jsonString.length; i++) {
                 const char = jsonString.charCodeAt(i);
                 hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convertir a 32-bit integer
+                hash = hash & hash;
             }
             return hash.toString();
         }
 
-        // Función para mostrar popup de cambios detectados
         function showChangesDetectedPopup() {
-            // Crear overlay del popup
             const overlay = document.createElement('div');
             overlay.id = 'changesOverlay';
             overlay.style.cssText = `
@@ -1041,7 +943,6 @@
                 justify-content: center;
             `;
 
-            // Crear contenido del popup
             const popup = document.createElement('div');
             popup.style.cssText = `
                 background: linear-gradient(145deg, #ffffff, #f8f9fa);
@@ -1090,7 +991,6 @@
             overlay.appendChild(popup);
             document.body.appendChild(overlay);
 
-            // Event listeners para los botones
             document.getElementById('dismissChanges').addEventListener('click', () => {
                 document.body.removeChild(overlay);
             });
@@ -1099,7 +999,6 @@
                 location.reload();
             });
 
-            // Efecto hover para los botones
             const buttons = popup.querySelectorAll('button');
             buttons.forEach(button => {
                 button.addEventListener('mouseenter', () => {
@@ -1111,10 +1010,8 @@
             });
         }
 
-        // Función para verificar cambios en los datos
         async function checkForDataChanges() {
             try {
-                // Añadir timestamp para evitar cache también en las verificaciones
                 const timestamp = new Date().getTime();
                 const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
                 const response = await fetch(urlWithCache);
@@ -1128,18 +1025,15 @@
                 const newData = parseCSV(csvText);
                 const newDataHash = generateDataHash(newData);
 
-                // Si hay un hash previo y es diferente, mostrar popup
                 if (lastDataHash && lastDataHash !== newDataHash) {
                     console.log('Cambios detectados en los datos');
                     showChangesDetectedPopup();
-                    // Detener el temporizador para evitar múltiples popups
                     if (checkInterval) {
                         clearInterval(checkInterval);
                         checkInterval = null;
                     }
                 }
 
-                // Actualizar el hash para futuras comparaciones
                 lastDataHash = newDataHash;
 
             } catch (error) {
@@ -1147,14 +1041,11 @@
             }
         }
 
-        // Función para iniciar el temporizador de verificación
         function startDataChangeTimer() {
-            // Verificar cada 30 segundos
             checkInterval = setInterval(checkForDataChanges, 30000);
             console.log('Temporizador de verificación de cambios iniciado (cada 30s)');
         }
 
-        // Función para detener el temporizador
         function stopDataChangeTimer() {
             if (checkInterval) {
                 clearInterval(checkInterval);
@@ -1163,12 +1054,10 @@
             }
         }
 
-        // Cargar datos cuando la página esté lista
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
-            startDataChangeTimer(); // Iniciar el temporizador al cargar
+            startDataChangeTimer();
 
-            // Manejar apertura y cierre del modal de ayuda
             const helpButton = document.getElementById('helpButton');
             const helpModal = document.getElementById('helpModal');
             const closeHelp = document.getElementById('closeHelp');
@@ -1181,7 +1070,6 @@
                 helpModal.style.display = 'none';
             });
 
-            // Cerrar modal de ayuda si se hace clic fuera del contenido
             window.addEventListener('click', (event) => {
                 if (event.target === helpModal) {
                     helpModal.style.display = 'none';
