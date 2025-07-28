@@ -844,15 +844,24 @@
                 // Poblar filtros
                 populateFilters(data);
 
-                // Aplicar filtros guardados si existen
-                const savedGrupo = localStorage.getItem('grupoFilter');
-                const savedCategoria = localStorage.getItem('categoriaFilter');
+                // Cargar filtros guardados y aplicarlos
+                loadFiltersState();
 
-                if (savedGrupo || savedCategoria) {
-                    filterData();
-                } else {
-                    createTable(data);
-                }
+                // Actualizar contadores después de cargar filtros guardados
+                setTimeout(() => {
+                    updateFiltersBasedOnSelection();
+                    
+                    // Aplicar filtros guardados si existen
+                    const savedGrupo = localStorage.getItem('grupoFilter');
+                    const savedCategoria = localStorage.getItem('categoriaFilter');
+                    const savedProductoSearch = localStorage.getItem('productoSearch');
+
+                    if (savedGrupo || savedCategoria || savedProductoSearch) {
+                        filterData();
+                    } else {
+                        createTable(data);
+                    }
+                }, 100);
 
             } catch (error) {
                 console.error('Error loading data:', error);
