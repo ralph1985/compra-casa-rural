@@ -98,7 +98,8 @@
                         <li>Los números entre paréntesis muestran <strong>(comprados de total)</strong> para hacer
                             seguimiento del progreso. Se actualizan dinámicamente según los filtros aplicados
                         </li>
-                        <li><strong>Combinar filtros:</strong> Puedes usar múltiples filtros al mismo tiempo para búsquedas muy específicas</li>
+                        <li><strong>Combinar filtros:</strong> Puedes usar múltiples filtros al mismo tiempo para
+                            búsquedas muy específicas</li>
                     </ul>
                 </div>
 
@@ -114,7 +115,8 @@
                         </li>
                         <li>Tu progreso se guarda automáticamente en el navegador local
                         </li>
-                        <li>Los contadores de los filtros se actualizan inmediatamente al marcar/desmarcar productos</li>
+                        <li>Los contadores de los filtros se actualizan inmediatamente al marcar/desmarcar productos
+                        </li>
                     </ul>
                 </div>
 
@@ -127,19 +129,24 @@
                         <li>Cada <span class="help-grupo">grupo</span> también tiene su propio color único
                             (hasta 10 colores diferentes)
                         </li>
-                        <li><strong>Ordenación automática:</strong> Los productos pendientes aparecen siempre arriba, los comprados abajo (tachados)
+                        <li><strong>Ordenación automática:</strong> Los productos pendientes aparecen siempre arriba,
+                            los comprados abajo (tachados)
                         </li>
-                        <li>Las <strong>notas adicionales</strong> aparecen en una caja amarilla distintiva cuando están disponibles</li>
-                        <li>Cada producto muestra: <em>nombre, cantidad/unidad, categoría, grupo y notas (si las hay)</em></li>
+                        <li>Las <strong>notas adicionales</strong> aparecen en una caja amarilla distintiva cuando están
+                            disponibles</li>
+                        <li>Cada producto muestra: <em>nombre, cantidad/unidad, categoría, grupo y notas (si las
+                                hay)</em></li>
                     </ul>
                 </div>
 
                 <div class="help-section">
                     <h4>💾 Guardado automático</h4>
                     <ul>
-                        <li><strong>Filtros:</strong> Todos los filtros seleccionados se guardan automáticamente y se restauran al recargar la página
+                        <li><strong>Filtros:</strong> Todos los filtros seleccionados se guardan automáticamente y se
+                            restauran al recargar la página
                         </li>
-                        <li><strong>Estado de compras:</strong> Los productos marcados como comprados se mantienen al recargar la página
+                        <li><strong>Estado de compras:</strong> Los productos marcados como comprados se mantienen al
+                            recargar la página
                         </li>
                         <li><strong>Búsqueda:</strong> El texto de búsqueda también se guarda y restaura
                         </li>
@@ -151,28 +158,37 @@
                 <div class="help-section">
                     <h4>🔄 Actualización automática</h4>
                     <ul>
-                        <li><strong>Detección de cambios:</strong> La aplicación verifica automáticamente cada 30 segundos si hay cambios en la lista de compras
+                        <li><strong>Detección de cambios:</strong> La aplicación verifica automáticamente cada 30
+                            segundos si hay cambios en la lista de compras
                         </li>
-                        <li>Si se detectan cambios (productos añadidos, modificados o eliminados), aparece un popup para notificarte
+                        <li>Si se detectan cambios (productos añadidos, modificados o eliminados), aparece un popup para
+                            notificarte
                         </li>
-                        <li>Puedes elegir <em>Refrescar</em> para cargar los nuevos datos o <em>Ignorar</em> para continuar con la versión actual
+                        <li>Puedes elegir <em>Refrescar</em> para cargar los nuevos datos o <em>Ignorar</em> para
+                            continuar con la versión actual
                         </li>
-                        <li>Los cambios se detectan incluso si otra persona modifica el documento Excel simultáneamente</li>
+                        <li>Los cambios se detectan incluso si otra persona modifica el documento Excel simultáneamente
+                        </li>
                     </ul>
                 </div>
 
                 <div class="help-section">
                     <h4>📱 Consejos de uso</h4>
                     <ul>
-                        <li><strong>Para ir de compras:</strong> Usa el filtro "No comprado" para ver solo lo que falta por comprar
+                        <li><strong>Para ir de compras:</strong> Usa el filtro "No comprado" para ver solo lo que falta
+                            por comprar
                         </li>
-                        <li><strong>Para revisar el progreso:</strong> Mantén "Todos" para ver pendientes arriba y comprados abajo
+                        <li><strong>Para revisar el progreso:</strong> Mantén "Todos" para ver pendientes arriba y
+                            comprados abajo
                         </li>
-                        <li><strong>Para buscar algo específico:</strong> Combina búsqueda por texto con filtros de grupo/categoría
+                        <li><strong>Para buscar algo específico:</strong> Combina búsqueda por texto con filtros de
+                            grupo/categoría
                         </li>
-                        <li><strong>En dispositivos móviles:</strong> La interfaz se adapta automáticamente para una mejor experiencia táctil
+                        <li><strong>En dispositivos móviles:</strong> La interfaz se adapta automáticamente para una
+                            mejor experiencia táctil
                         </li>
-                        <li><strong>Si hay problemas:</strong> Usa el botón "🔄 Reintentar" si aparece algún error de carga</li>
+                        <li><strong>Si hay problemas:</strong> Usa el botón "🔄 Reintentar" si aparece algún error de
+                            carga</li>
                     </ul>
                 </div>
             </div>
@@ -879,7 +895,7 @@
 
             // Verificar el filtro actual de estado de compra
             const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
-            
+
             // Si estamos filtrando por un estado específico y el producto ya no cumple el criterio,
             // debemos re-filtrar los datos inmediatamente para que desaparezca/aparezca
             if (estadoFilter === 'no-comprado' && checkbox.checked) {
@@ -975,7 +991,7 @@
                 // Actualizar contadores después de cargar filtros guardados
                 setTimeout(() => {
                     updateFiltersBasedOnSelection();
-                    
+
                     // Aplicar filtros guardados si existen
                     const savedGrupo = localStorage.getItem('grupoFilter');
                     const savedCategoria = localStorage.getItem('categoriaFilter');
