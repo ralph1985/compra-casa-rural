@@ -9,257 +9,129 @@
 </head>
 
 <body>
-    <app-compra-rural></app-compra-rural>
+    <div class="container">
+        <div class="welcome-message">
+            <h1>Gestión de la compra - Casa Rural</h1>
+        </div>
 
-    <script type="module">
-        import { LitElement, html, css } from 'https://cdn.skypack.dev/lit';
+        <div class="table-container">
+            <h2>Lista de compras</h2>
+            <div id="loading" class="loading">Cargando...</div>
+            <div id="error" class="error" style="display: none;"></div>
+            <table id="dataTable" style="display: none;">
+                <thead>
+                    <tr id="tableHeader"></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
 
-        // URL del endpoint de Google Apps Script
-        const ENDPOINT = "https://script.google.com/macros/s/AKfycbwJFV6LQvH8I23pxW8-IwYHyDBL57oJ1K-VlWYZCWTfHY2oGnaplPlg5dxjfYJQFuV6/exec";
+    <script>
+        // URL del CSV de Google Sheets
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
 
-        // Función para crear URL con proxy CORS
-        const getProxyUrl = (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`;
+        // Función para parsear CSV
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const result = [];
 
-        class AppCompraRural extends LitElement {
-            static properties = {
-                data: { type: Array },
-                loading: { type: Boolean }
-            };
-
-            constructor() {
-                super();
-                this.data = [];
-                this.loading = false;
-                this.loadData();
-            }
-
-            static styles = css`
-                :host {
-                    display: block;
-                    padding: 20px;
-                    font-family: Arial, sans-serif;
-                }
-                
-                .welcome-message {
-                    text-align: center;
-                    color: #2c3e50;
-                    margin-bottom: 30px;
-                }
-
-                .form-container {
-                    background: #f8f9fa;
-                    padding: 20px;
-                    border-radius: 8px;
-                    margin-bottom: 30px;
-                }
-
-                .form-container h2 {
-                    margin-top: 0;
-                    color: #2c3e50;
-                }
-
-                .form-group {
-                    margin-bottom: 15px;
-                }
-
-                .form-group label {
-                    display: block;
-                    margin-bottom: 5px;
-                    font-weight: bold;
-                    color: #555;
-                }
-
-                .form-group input {
-                    width: 100%;
-                    padding: 10px;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                    font-size: 16px;
-                    box-sizing: border-box;
-                }
-
-                .btn-submit {
-                    background-color: #28a745;
-                    color: white;
-                    padding: 12px 24px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 16px;
-                }
-
-                .btn-submit:hover {
-                    background-color: #218838;
-                }
-
-                .btn-submit:disabled {
-                    background-color: #6c757d;
-                    cursor: not-allowed;
-                }
-
-                .table-container {
-                    overflow-x: auto;
-                }
-
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    background: white;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                }
-
-                th, td {
-                    padding: 12px;
-                    text-align: left;
-                    border-bottom: 1px solid #ddd;
-                }
-
-                th {
-                    background-color: #f8f9fa;
-                    font-weight: bold;
-                    color: #2c3e50;
-                }
-
-                tr:hover {
-                    background-color: #f8f9fa;
-                }
-
-                .loading {
-                    text-align: center;
-                    padding: 20px;
-                    color: #666;
-                }
-
-                .error {
-                    color: #dc3545;
-                    background-color: #f8d7da;
-                    padding: 10px;
-                    border-radius: 4px;
-                    margin: 10px 0;
-                }
-            `;
-
-            async loadData() {
-                this.loading = true;
-                try {
-                    const response = await fetch(getProxyUrl(ENDPOINT));
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    this.data = await response.json();
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    this.data = [];
-                } finally {
-                    this.loading = false;
+            for (let line of lines) {
+                if (line.trim()) {
+                    // Simple CSV parsing - handles basic cases
+                    const row = line.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''));
+                    result.push(row);
                 }
             }
 
-            async handleSubmit(e) {
-                e.preventDefault();
+            return result;
+        }
 
-                const formData = new FormData(e.target);
-                const data = {
-                    nombre: formData.get('nombre'),
-                    producto: formData.get('producto'),
-                    cantidad: formData.get('cantidad')
-                };
+        // Función para crear la tabla
+        function createTable(data) {
+            const table = document.getElementById('dataTable');
+            const header = document.getElementById('tableHeader');
+            const body = document.getElementById('tableBody');
 
-                if (!data.nombre || !data.producto || !data.cantidad) {
-                    alert('Por favor, completa todos los campos');
-                    return;
-                }
+            // Limpiar contenido anterior
+            header.innerHTML = '';
+            body.innerHTML = '';
 
-                this.loading = true;
-                try {
-                    const response = await fetch(getProxyUrl(ENDPOINT), {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    // Limpiar formulario
-                    e.target.reset();
-
-                    // Recargar datos
-                    await this.loadData();
-
-                } catch (error) {
-                    console.error('Error adding data:', error);
-                    alert('Error al guardar los datos');
-                } finally {
-                    this.loading = false;
-                }
+            if (data.length === 0) {
+                showError('No hay datos disponibles');
+                return;
             }
 
-            render() {
-                return html`
-                    <div class="welcome-message">
-                        <h1>Gestión de la compra - Casa Rural</h1>
-                    </div>
+            // Crear encabezados (primera fila)
+            const headerRow = data[0];
+            headerRow.forEach(cellData => {
+                const th = document.createElement('th');
+                th.textContent = cellData;
+                header.appendChild(th);
+            });
 
-                    <div class="form-container">
-                        <h2>Añadir nueva compra</h2>
-                        <form @submit=${this.handleSubmit}>
-                            <div class="form-group">
-                                <label for="nombre">Nombre:</label>
-                                <input type="text" id="nombre" name="nombre" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="producto">Producto:</label>
-                                <input type="text" id="producto" name="producto" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="cantidad">Cantidad:</label>
-                                <input type="text" id="cantidad" name="cantidad" required>
-                            </div>
-                            <button type="submit" class="btn-submit" ?disabled=${this.loading}>
-                                ${this.loading ? 'Guardando...' : 'Añadir compra'}
-                            </button>
-                        </form>
-                    </div>
+            // Crear filas de datos (resto de filas)
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                const tr = document.createElement('tr');
 
-                    <div class="table-container">
-                        <h2>Lista de compras</h2>
-                        ${this.loading ?
-                        html`<div class="loading">Cargando...</div>` :
-                        this.data.length > 0 ?
-                            html`
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Producto</th>
-                                                <th>Cantidad</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${this.data.map(row => html`
-                                                <tr>
-                                                    <td>${row[0] || ''}</td>
-                                                    <td>${row[1] || ''}</td>
-                                                    <td>${row[2] || ''}</td>
-                                                </tr>
-                                            `)}
-                                        </tbody>
-                                    </table>
-                                ` :
-                            html`<div class="loading">No hay datos disponibles</div>`
-                    }
-                    </div>
-                `;
+                row.forEach(cellData => {
+                    const td = document.createElement('td');
+                    td.textContent = cellData || '';
+                    tr.appendChild(td);
+                });
+
+                body.appendChild(tr);
+            }
+
+            // Mostrar tabla
+            hideLoading();
+            table.style.display = 'table';
+        }
+
+        // Función para mostrar loading
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('dataTable').style.display = 'none';
+        }
+
+        // Función para ocultar loading
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Función para mostrar error
+        function showError(message) {
+            hideLoading();
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Función para cargar datos
+        async function loadData() {
+            showLoading();
+
+            try {
+                const response = await fetch(CSV_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const csvText = await response.text();
+                const data = parseCSV(csvText);
+                createTable(data);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError('Error al cargar los datos');
             }
         }
 
-        customElements.define('app-compra-rural', AppCompraRural);
+        // Cargar datos cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 
