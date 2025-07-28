@@ -51,6 +51,40 @@
         let originalData = [];
         let grupoColumnIndex = -1;
         let categoriaColumnIndex = -1;
+        let purchasedItems = new Set();
+
+        // Cargar estado de localStorage
+        function loadPurchasedState() {
+            const saved = localStorage.getItem('purchasedItems');
+            if (saved) {
+                purchasedItems = new Set(JSON.parse(saved));
+            }
+        }
+
+        // Guardar estado en localStorage
+        function savePurchasedState() {
+            localStorage.setItem('purchasedItems', JSON.stringify([...purchasedItems]));
+        }
+
+        // Generar ID único para cada fila basado en su contenido
+        function generateRowId(row) {
+            return btoa(row.join('|')).replace(/[^a-zA-Z0-9]/g, '');
+        }
+
+        // Manejar cambio de estado de compra
+        function handlePurchaseToggle(checkbox, rowId) {
+            const row = checkbox.closest('tr');
+            
+            if (checkbox.checked) {
+                purchasedItems.add(rowId);
+                row.classList.add('purchased');
+            } else {
+                purchasedItems.delete(rowId);
+                row.classList.remove('purchased');
+            }
+            
+            savePurchasedState();
+        }
 
         // Función para parsear CSV
         function parseCSV(text) {
@@ -169,8 +203,15 @@
                 return;
             }
 
-            // Crear encabezados (primera fila)
+            // Crear encabezados (primera fila + columna de comprado)
             const headerRow = data[0];
+            
+            // Agregar columna de "Comprado" al inicio
+            const purchasedTh = document.createElement('th');
+            purchasedTh.textContent = 'Comprado';
+            purchasedTh.style.width = '80px';
+            header.appendChild(purchasedTh);
+            
             headerRow.forEach(cellData => {
                 const th = document.createElement('th');
                 th.textContent = cellData;
@@ -181,13 +222,29 @@
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
                 const tr = document.createElement('tr');
-
+                const rowId = generateRowId(row);
+                
+                // Agregar checkbox de comprado
+                const purchasedTd = document.createElement('td');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = purchasedItems.has(rowId);
+                checkbox.addEventListener('change', () => handlePurchaseToggle(checkbox, rowId));
+                purchasedTd.appendChild(checkbox);
+                tr.appendChild(purchasedTd);
+                
+                // Agregar resto de celdas
                 row.forEach(cellData => {
                     const td = document.createElement('td');
                     td.textContent = cellData || '';
                     tr.appendChild(td);
                 });
-
+                
+                // Aplicar clase de comprado si está marcado
+                if (purchasedItems.has(rowId)) {
+                    tr.classList.add('purchased');
+                }
+                
                 body.appendChild(tr);
             }
 
@@ -232,6 +289,9 @@
                 
                 // Guardar datos originales
                 originalData = data;
+                
+                // Cargar estado de compras
+                loadPurchasedState();
                 
                 // Poblar filtros
                 populateFilters(data);

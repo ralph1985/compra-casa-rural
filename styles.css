@@ -100,6 +100,25 @@ tr:hover {
     background-color: #f8f9fa;
 }
 
+/* Estilos para elementos comprados */
+tr.purchased {
+    text-decoration: line-through;
+    opacity: 0.6;
+    background-color: #f8f9fa;
+}
+
+tr.purchased:hover {
+    background-color: #e9ecef;
+}
+
+/* Estilo para el checkbox de comprado */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0;
+}
+
 .loading {
     text-align: center;
     padding: 20px;
