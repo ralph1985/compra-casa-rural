@@ -51,9 +51,12 @@
 
         // Variables globales para almacenar datos
         let originalData = [];
+        let currentData = [];
         let grupoColumnIndex = -1;
         let categoriaColumnIndex = -1;
+        let productoColumnIndex = -1;
         let purchasedItems = new Set();
+        let currentSort = { column: -1, direction: 'asc' };
 
         // Cargar estado de localStorage
         function loadPurchasedState() {
@@ -104,6 +107,60 @@
             return result;
         }
 
+        // Función para ordenar datos
+        function sortData(columnIndex, direction = 'asc') {
+            if (!currentData.length || columnIndex < 0) return;
+
+            const headers = currentData[0];
+            const dataRows = currentData.slice(1);
+
+            dataRows.sort((a, b) => {
+                const valueA = (a[columnIndex] || '').toString().toLowerCase();
+                const valueB = (b[columnIndex] || '').toString().toLowerCase();
+
+                if (direction === 'asc') {
+                    return valueA.localeCompare(valueB, 'es', { numeric: true });
+                } else {
+                    return valueB.localeCompare(valueA, 'es', { numeric: true });
+                }
+            });
+
+            const sortedData = [headers, ...dataRows];
+            createTable(sortedData);
+        }
+
+        // Función para manejar click en encabezado
+        function handleHeaderClick(columnIndex, columnName) {
+            const sortableColumns = ['Producto', 'Grupo', 'Categoría'];
+            if (!sortableColumns.includes(columnName)) return;
+
+            let direction = 'asc';
+            if (currentSort.column === columnIndex && currentSort.direction === 'asc') {
+                direction = 'desc';
+            }
+
+            currentSort = { column: columnIndex, direction };
+            sortData(columnIndex, direction);
+            updateSortIndicators();
+        }
+
+        // Función para actualizar indicadores de ordenación
+        function updateSortIndicators() {
+            const headers = document.querySelectorAll('#tableHeader th');
+            headers.forEach((th, index) => {
+                const sortIcon = th.querySelector('.sort-icon');
+                if (sortIcon) {
+                    if (currentSort.column === index - 1) { // -1 porque el checkbox ocupa el primer índice
+                        sortIcon.textContent = currentSort.direction === 'asc' ? ' ▲' : ' ▼';
+                        sortIcon.style.opacity = '1';
+                    } else {
+                        sortIcon.textContent = ' ▲▼';
+                        sortIcon.style.opacity = '0.3';
+                    }
+                }
+            });
+        }
+
         // Función para poblar los filtros
         function populateFilters(data) {
             if (data.length === 0) return;
@@ -113,6 +170,7 @@
             // Encontrar índices de las columnas
             grupoColumnIndex = headers.indexOf('Grupo');
             categoriaColumnIndex = headers.indexOf('Categoría');
+            productoColumnIndex = headers.indexOf('Producto');
 
             if (grupoColumnIndex === -1 && categoriaColumnIndex === -1) return;
 
@@ -187,7 +245,14 @@
                 }
             }
 
-            createTable(filteredData);
+            currentData = filteredData;
+            
+            // Aplicar ordenación actual si existe
+            if (currentSort.column >= 0) {
+                sortData(currentSort.column, currentSort.direction);
+            } else {
+                createTable(filteredData);
+            }
         }
 
         // Función para crear la tabla
@@ -205,6 +270,9 @@
                 return;
             }
 
+            // Guardar datos actuales
+            currentData = data;
+
             // Crear encabezados (primera fila + columna de comprado)
             const headerRow = data[0];
             
@@ -214,9 +282,30 @@
             purchasedTh.style.width = '80px';
             header.appendChild(purchasedTh);
             
-            headerRow.forEach(cellData => {
+            headerRow.forEach((cellData, index) => {
                 const th = document.createElement('th');
-                th.textContent = cellData;
+                const sortableColumns = ['Producto', 'Grupo', 'Categoría'];
+                
+                if (sortableColumns.includes(cellData)) {
+                    th.style.cursor = 'pointer';
+                    th.style.userSelect = 'none';
+                    th.addEventListener('click', () => handleHeaderClick(index, cellData));
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = cellData;
+                    
+                    const sortIcon = document.createElement('span');
+                    sortIcon.className = 'sort-icon';
+                    sortIcon.textContent = ' ▲▼';
+                    sortIcon.style.opacity = '0.3';
+                    sortIcon.style.fontSize = '0.8em';
+                    
+                    th.appendChild(textSpan);
+                    th.appendChild(sortIcon);
+                } else {
+                    th.textContent = cellData;
+                }
+                
                 header.appendChild(th);
             });
 
@@ -249,6 +338,9 @@
                 
                 body.appendChild(tr);
             }
+
+            // Actualizar indicadores de ordenación
+            updateSortIndicators();
 
             // Mostrar tabla
             hideLoading();
@@ -291,6 +383,10 @@
                 
                 // Guardar datos originales
                 originalData = data;
+                currentData = data;
+                
+                // Resetear ordenación
+                currentSort = { column: -1, direction: 'asc' };
                 
                 // Cargar estado de compras
                 loadPurchasedState();
