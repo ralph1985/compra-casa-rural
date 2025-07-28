@@ -40,6 +40,23 @@
                         <option value="">Todas las categorías</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <label>Estado de compra:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="estadoFilter" value="todos" checked>
+                            <span>Todos</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="estadoFilter" value="comprado">
+                            <span>Comprado</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="estadoFilter" value="no-comprado">
+                            <span>No comprado</span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div id="loading" class="loading">Cargando...</div>
@@ -209,6 +226,7 @@
             const savedGrupo = localStorage.getItem('grupoFilter');
             const savedCategoria = localStorage.getItem('categoriaFilter');
             const savedProductoSearch = localStorage.getItem('productoSearch');
+            const savedEstadoFilter = localStorage.getItem('estadoFilter');
 
             if (savedGrupo) {
                 const grupoSelect = document.getElementById('grupoFilter');
@@ -230,6 +248,13 @@
                     productoSearchInput.value = savedProductoSearch;
                 }
             }
+
+            if (savedEstadoFilter) {
+                const estadoRadio = document.querySelector(`input[name="estadoFilter"][value="${savedEstadoFilter}"]`);
+                if (estadoRadio) {
+                    estadoRadio.checked = true;
+                }
+            }
         }
 
         // Guardar filtros en localStorage
@@ -237,10 +262,12 @@
             const grupoFilter = document.getElementById('grupoFilter').value;
             const categoriaFilter = document.getElementById('categoriaFilter').value;
             const productoSearch = document.getElementById('productoSearch').value;
+            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
 
             localStorage.setItem('grupoFilter', grupoFilter);
             localStorage.setItem('categoriaFilter', categoriaFilter);
             localStorage.setItem('productoSearch', productoSearch);
+            localStorage.setItem('estadoFilter', estadoFilter);
         }
 
         // Generar ID único para cada fila basado en su contenido
@@ -324,6 +351,7 @@
 
             const grupoFilter = document.getElementById('grupoFilter').value;
             const categoriaFilter = document.getElementById('categoriaFilter').value;
+            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
             const headers = originalData[0];
 
             // Obtener datos filtrados para calcular opciones disponibles
@@ -337,6 +365,19 @@
             // Si hay filtro de categoría, filtrar por categoría
             if (categoriaFilter && categoriaColumnIndex !== -1) {
                 availableData = availableData.filter(row => row[categoriaColumnIndex] === categoriaFilter);
+            }
+
+            // Filtrar por estado de compra
+            if (estadoFilter === 'comprado') {
+                availableData = availableData.filter(row => {
+                    const rowId = generateRowId(row);
+                    return purchasedItems.has(rowId);
+                });
+            } else if (estadoFilter === 'no-comprado') {
+                availableData = availableData.filter(row => {
+                    const rowId = generateRowId(row);
+                    return !purchasedItems.has(rowId);
+                });
             }
 
             // Calcular estadísticas para grupos disponibles
@@ -505,6 +546,16 @@
                 filterData();
                 productoSearchInput.focus();
             });
+
+            // Event listeners para los radio buttons de estado de compra
+            const estadoRadios = document.querySelectorAll('input[name="estadoFilter"]');
+            estadoRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    saveFiltersState();
+                    updateFiltersBasedOnSelection();
+                    filterData();
+                });
+            });
         }
 
         // Función para filtrar datos
@@ -512,6 +563,7 @@
             const grupoFilter = document.getElementById('grupoFilter').value;
             const categoriaFilter = document.getElementById('categoriaFilter').value;
             const productoSearch = document.getElementById('productoSearch').value.toLowerCase().trim();
+            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
 
             if (!originalData.length) return;
 
@@ -539,6 +591,19 @@
                 if (productoSearch && productoColumnIndex !== -1) {
                     const producto = (row[productoColumnIndex] || '').toLowerCase();
                     if (!producto.includes(productoSearch)) {
+                        showRow = false;
+                    }
+                }
+
+                // Filtrar por estado de compra
+                if (estadoFilter === 'comprado') {
+                    const rowId = generateRowId(row);
+                    if (!purchasedItems.has(rowId)) {
+                        showRow = false;
+                    }
+                } else if (estadoFilter === 'no-comprado') {
+                    const rowId = generateRowId(row);
+                    if (purchasedItems.has(rowId)) {
                         showRow = false;
                     }
                 }
