@@ -242,25 +242,32 @@
             });
         }
 
-        // Función para poblar los filtros
-        function populateFilters(data) {
-            if (data.length === 0) return;
+        // Función para actualizar filtros dinámicamente según la selección actual
+        function updateFiltersBasedOnSelection() {
+            if (!originalData.length) return;
 
-            const headers = data[0];
+            const grupoFilter = document.getElementById('grupoFilter').value;
+            const categoriaFilter = document.getElementById('categoriaFilter').value;
+            const headers = originalData[0];
 
-            // Encontrar índices de las columnas
-            grupoColumnIndex = headers.indexOf('Grupo');
-            categoriaColumnIndex = headers.indexOf('Categoría');
-            productoColumnIndex = headers.indexOf('Producto');
+            // Obtener datos filtrados para calcular opciones disponibles
+            let availableData = originalData.slice(1); // Sin headers
 
-            if (grupoColumnIndex === -1 && categoriaColumnIndex === -1) return;
+            // Si hay filtro de grupo, filtrar primero por grupo
+            if (grupoFilter && grupoColumnIndex !== -1) {
+                availableData = availableData.filter(row => row[grupoColumnIndex] === grupoFilter);
+            }
 
-            // Obtener valores únicos para cada filtro y contar ocurrencias y comprados
+            // Si hay filtro de categoría, filtrar por categoría
+            if (categoriaFilter && categoriaColumnIndex !== -1) {
+                availableData = availableData.filter(row => row[categoriaColumnIndex] === categoriaFilter);
+            }
+
+            // Calcular estadísticas para grupos disponibles
             const grupos = new Map();
             const categorias = new Map();
 
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
+            availableData.forEach(row => {
                 const rowId = generateRowId(row);
                 const isComprado = purchasedItems.has(rowId);
 
@@ -283,38 +290,127 @@
                     stats.total += 1;
                     if (isComprado) stats.comprados += 1;
                 }
-            }
+            });
 
-            // Poblar selector de grupos con conteos de comprados
+            // Actualizar selector de grupos
             const grupoSelect = document.getElementById('grupoFilter');
+            const currentGrupoValue = grupoSelect.value;
             grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
-            grupos.forEach((stats, grupo) => {
-                const option = document.createElement('option');
-                option.value = grupo;
-                option.textContent = `${grupo} (${stats.comprados} de ${stats.total})`;
-                grupoSelect.appendChild(option);
-            });
+            
+            // Si no hay filtro de categoría, mostrar todos los grupos originales
+            if (!categoriaFilter) {
+                // Recalcular con todos los datos originales para grupos
+                const allGrupos = new Map();
+                for (let i = 1; i < originalData.length; i++) {
+                    const row = originalData[i];
+                    const rowId = generateRowId(row);
+                    const isComprado = purchasedItems.has(rowId);
+                    
+                    if (grupoColumnIndex !== -1 && row[grupoColumnIndex]) {
+                        const grupo = row[grupoColumnIndex];
+                        if (!allGrupos.has(grupo)) {
+                            allGrupos.set(grupo, { total: 0, comprados: 0 });
+                        }
+                        const stats = allGrupos.get(grupo);
+                        stats.total += 1;
+                        if (isComprado) stats.comprados += 1;
+                    }
+                }
+                
+                allGrupos.forEach((stats, grupo) => {
+                    const option = document.createElement('option');
+                    option.value = grupo;
+                    option.textContent = `${grupo} (${stats.comprados} de ${stats.total})`;
+                    grupoSelect.appendChild(option);
+                });
+            } else {
+                // Mostrar solo grupos que tienen la categoría seleccionada
+                grupos.forEach((stats, grupo) => {
+                    const option = document.createElement('option');
+                    option.value = grupo;
+                    option.textContent = `${grupo} (${stats.comprados} de ${stats.total})`;
+                    grupoSelect.appendChild(option);
+                });
+            }
+            
+            grupoSelect.value = currentGrupoValue;
 
-            // Poblar selector de categorías con conteos de comprados
+            // Actualizar selector de categorías
             const categoriaSelect = document.getElementById('categoriaFilter');
+            const currentCategoriaValue = categoriaSelect.value;
             categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
-            categorias.forEach((stats, categoria) => {
-                const option = document.createElement('option');
-                option.value = categoria;
-                option.textContent = `${categoria} (${stats.comprados} de ${stats.total})`;
-                categoriaSelect.appendChild(option);
-            });
+            
+            // Si no hay filtro de grupo, mostrar todas las categorías originales
+            if (!grupoFilter) {
+                // Recalcular con todos los datos originales para categorías
+                const allCategorias = new Map();
+                for (let i = 1; i < originalData.length; i++) {
+                    const row = originalData[i];
+                    const rowId = generateRowId(row);
+                    const isComprado = purchasedItems.has(rowId);
+                    
+                    if (categoriaColumnIndex !== -1 && row[categoriaColumnIndex]) {
+                        const categoria = row[categoriaColumnIndex];
+                        if (!allCategorias.has(categoria)) {
+                            allCategorias.set(categoria, { total: 0, comprados: 0 });
+                        }
+                        const stats = allCategorias.get(categoria);
+                        stats.total += 1;
+                        if (isComprado) stats.comprados += 1;
+                    }
+                }
+                
+                allCategorias.forEach((stats, categoria) => {
+                    const option = document.createElement('option');
+                    option.value = categoria;
+                    option.textContent = `${categoria} (${stats.comprados} de ${stats.total})`;
+                    categoriaSelect.appendChild(option);
+                });
+            } else {
+                // Mostrar solo categorías que tienen el grupo seleccionado
+                categorias.forEach((stats, categoria) => {
+                    const option = document.createElement('option');
+                    option.value = categoria;
+                    option.textContent = `${categoria} (${stats.comprados} de ${stats.total})`;
+                    categoriaSelect.appendChild(option);
+                });
+            }
+            
+            categoriaSelect.value = currentCategoriaValue;
+        }
+
+        // Función para poblar los filtros
+        function populateFilters(data) {
+            if (data.length === 0) return;
+
+            const headers = data[0];
+
+            // Encontrar índices de las columnas
+            grupoColumnIndex = headers.indexOf('Grupo');
+            categoriaColumnIndex = headers.indexOf('Categoría');
+            productoColumnIndex = headers.indexOf('Producto');
+
+            if (grupoColumnIndex === -1 && categoriaColumnIndex === -1) return;
+
+            // Actualizar filtros dinámicamente
+            updateFiltersBasedOnSelection();
 
             // Cargar filtros guardados
             loadFiltersState();
 
-            // Agregar event listeners que también guarden el estado
+            // Agregar event listeners que también guarden el estado y actualicen filtros
+            const grupoSelect = document.getElementById('grupoFilter');
+            const categoriaSelect = document.getElementById('categoriaFilter');
+
             grupoSelect.addEventListener('change', () => {
                 saveFiltersState();
+                updateFiltersBasedOnSelection();
                 filterData();
             });
+            
             categoriaSelect.addEventListener('change', () => {
                 saveFiltersState();
+                updateFiltersBasedOnSelection();
                 filterData();
             });
         }
