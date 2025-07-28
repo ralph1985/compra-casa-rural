@@ -395,32 +395,23 @@
             const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
             const headers = originalData[0];
 
-            let availableData = originalData.slice(1);
+            // Para los contadores, siempre usamos todos los datos originales sin filtrar por estado
+            let dataForCounters = originalData.slice(1);
 
+            // Solo aplicamos filtros de grupo y categoría para los contadores
             if (grupoFilter && grupoColumnIndex !== -1) {
-                availableData = availableData.filter(row => row[grupoColumnIndex] === grupoFilter);
+                dataForCounters = dataForCounters.filter(row => row[grupoColumnIndex] === grupoFilter);
             }
 
             if (categoriaFilter && categoriaColumnIndex !== -1) {
-                availableData = availableData.filter(row => row[categoriaColumnIndex] === categoriaFilter);
+                dataForCounters = dataForCounters.filter(row => row[categoriaColumnIndex] === categoriaFilter);
             }
 
-            if (estadoFilter === 'comprado') {
-                availableData = availableData.filter(row => {
-                    const rowId = generateRowId(row);
-                    return purchasedItems.has(rowId);
-                });
-            } else if (estadoFilter === 'no-comprado') {
-                availableData = availableData.filter(row => {
-                    const rowId = generateRowId(row);
-                    return !purchasedItems.has(rowId);
-                });
-            }
-
+            // Calculamos contadores basados en los datos filtrados solo por grupo/categoría
             const grupos = new Map();
             const categorias = new Map();
 
-            availableData.forEach(row => {
+            dataForCounters.forEach(row => {
                 const rowId = generateRowId(row);
                 const isComprado = purchasedItems.has(rowId);
 
@@ -450,6 +441,7 @@
             grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
 
             if (!categoriaFilter) {
+                // Si no hay filtro de categoría, mostramos todos los grupos con sus contadores completos
                 const allGrupos = new Map();
                 for (let i = 1; i < originalData.length; i++) {
                     const row = originalData[i];
@@ -474,6 +466,7 @@
                     grupoSelect.appendChild(option);
                 });
             } else {
+                // Si hay filtro de categoría, mostramos solo los grupos que tienen esa categoría
                 grupos.forEach((stats, grupo) => {
                     const option = document.createElement('option');
                     option.value = grupo;
@@ -489,6 +482,7 @@
             categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
 
             if (!grupoFilter) {
+                // Si no hay filtro de grupo, mostramos todas las categorías con sus contadores completos
                 const allCategorias = new Map();
                 for (let i = 1; i < originalData.length; i++) {
                     const row = originalData[i];
@@ -513,6 +507,7 @@
                     categoriaSelect.appendChild(option);
                 });
             } else {
+                // Si hay filtro de grupo, mostramos solo las categorías que tiene ese grupo
                 categorias.forEach((stats, categoria) => {
                     const option = document.createElement('option');
                     option.value = categoria;
