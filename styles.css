@@ -632,7 +632,7 @@ body {
 /* Responsive para el modal */
 @media (max-width: 768px) {
     .help-modal {
-        padding: 10px;
+        padding: 0;
     }
 
     .help-modal-content {
