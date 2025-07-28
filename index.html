@@ -34,14 +34,7 @@
 
             <div id="loading" class="loading">Cargando...</div>
             <div id="error" class="error" style="display: none;"></div>
-            <div class="table-wrapper">
-                <table id="dataTable" style="display: none;">
-                    <thead>
-                        <tr id="tableHeader"></tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
+            <div id="itemsContainer" class="items-container" style="display: none;"></div>
         </div>
     </div>
 
@@ -78,14 +71,14 @@
 
         // Manejar cambio de estado de compra
         function handlePurchaseToggle(checkbox, rowId) {
-            const row = checkbox.closest('tr');
+            const card = checkbox.closest('.item-card');
             
             if (checkbox.checked) {
                 purchasedItems.add(rowId);
-                row.classList.add('purchased');
+                card.classList.add('purchased');
             } else {
                 purchasedItems.delete(rowId);
-                row.classList.remove('purchased');
+                card.classList.remove('purchased');
             }
             
             savePurchasedState();
@@ -255,15 +248,12 @@
             }
         }
 
-        // Función para crear la tabla
+        // Función para crear la vista de tarjetas
         function createTable(data) {
-            const table = document.getElementById('dataTable');
-            const header = document.getElementById('tableHeader');
-            const body = document.getElementById('tableBody');
+            const itemsContainer = document.getElementById('itemsContainer');
 
             // Limpiar contenido anterior
-            header.innerHTML = '';
-            body.innerHTML = '';
+            itemsContainer.innerHTML = '';
 
             if (data.length === 0) {
                 showError('No hay datos disponibles');
@@ -272,86 +262,118 @@
 
             // Guardar datos actuales
             currentData = data;
+            const headers = data[0];
 
-            // Crear encabezados (primera fila + columna de comprado)
-            const headerRow = data[0];
-            
-            // Agregar columna de "Comprado" al inicio
-            const purchasedTh = document.createElement('th');
-            purchasedTh.textContent = 'Comprado';
-            purchasedTh.style.width = '80px';
-            header.appendChild(purchasedTh);
-            
-            headerRow.forEach((cellData, index) => {
-                const th = document.createElement('th');
-                const sortableColumns = ['Producto', 'Grupo', 'Categoría'];
-                
-                if (sortableColumns.includes(cellData)) {
-                    th.style.cursor = 'pointer';
-                    th.style.userSelect = 'none';
-                    th.addEventListener('click', () => handleHeaderClick(index, cellData));
-                    
-                    const textSpan = document.createElement('span');
-                    textSpan.textContent = cellData;
-                    
-                    const sortIcon = document.createElement('span');
-                    sortIcon.className = 'sort-icon';
-                    sortIcon.textContent = ' ▲▼';
-                    sortIcon.style.opacity = '0.3';
-                    sortIcon.style.fontSize = '0.8em';
-                    
-                    th.appendChild(textSpan);
-                    th.appendChild(sortIcon);
-                } else {
-                    th.textContent = cellData;
-                }
-                
-                header.appendChild(th);
-            });
+            // Encontrar índices de columnas
+            const indices = {
+                producto: headers.indexOf('Producto'),
+                cantidad: headers.indexOf('Cantidad'),
+                unidad: headers.indexOf('Unidad'),
+                categoria: headers.indexOf('Categoría'),
+                grupo: headers.indexOf('Grupo'),
+                notas: headers.indexOf('Notas')
+            };
 
-            // Crear filas de datos (resto de filas)
+            // Crear tarjetas de datos
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
-                const tr = document.createElement('tr');
                 const rowId = generateRowId(row);
                 
-                // Agregar checkbox de comprado
-                const purchasedTd = document.createElement('td');
+                // Crear contenedor de tarjeta
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.setAttribute('data-row-id', rowId);
+                
+                // Contenedor izquierdo para checkbox
+                const leftSection = document.createElement('div');
+                leftSection.className = 'card-left';
+                
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
+                checkbox.className = 'purchase-checkbox';
                 checkbox.checked = purchasedItems.has(rowId);
                 checkbox.addEventListener('change', () => handlePurchaseToggle(checkbox, rowId));
-                purchasedTd.appendChild(checkbox);
-                tr.appendChild(purchasedTd);
+                leftSection.appendChild(checkbox);
                 
-                // Agregar resto de celdas
-                row.forEach(cellData => {
-                    const td = document.createElement('td');
-                    td.textContent = cellData || '';
-                    tr.appendChild(td);
-                });
+                // Contenedor derecho para información
+                const rightSection = document.createElement('div');
+                rightSection.className = 'card-right';
+                
+                // Primera línea: Producto, Cantidad, Unidad
+                const line1 = document.createElement('div');
+                line1.className = 'card-line line-1';
+                
+                const producto = document.createElement('span');
+                producto.className = 'producto';
+                producto.textContent = row[indices.producto] || '';
+                
+                const cantidadUnidad = document.createElement('span');
+                cantidadUnidad.className = 'cantidad-unidad';
+                const cantidad = row[indices.cantidad] || '';
+                const unidad = row[indices.unidad] || '';
+                cantidadUnidad.textContent = cantidad + (unidad ? ` ${unidad}` : '');
+                
+                line1.appendChild(producto);
+                line1.appendChild(cantidadUnidad);
+                
+                // Segunda línea: Categoría y Grupo
+                const line2 = document.createElement('div');
+                line2.className = 'card-line line-2';
+                
+                const categoria = document.createElement('span');
+                categoria.className = 'categoria';
+                categoria.textContent = row[indices.categoria] || '';
+                
+                const grupo = document.createElement('span');
+                grupo.className = 'grupo';
+                grupo.textContent = row[indices.grupo] || '';
+                
+                line2.appendChild(categoria);
+                line2.appendChild(grupo);
+                
+                // Tercera línea: Notas (solo si hay contenido)
+                const notasContent = row[indices.notas] || '';
+                let line3 = null;
+                if (notasContent.trim()) {
+                    line3 = document.createElement('div');
+                    line3.className = 'card-line line-3';
+                    
+                    const notas = document.createElement('span');
+                    notas.className = 'notas';
+                    notas.textContent = notasContent;
+                    
+                    line3.appendChild(notas);
+                }
+                
+                // Agregar líneas al contenedor derecho
+                rightSection.appendChild(line1);
+                rightSection.appendChild(line2);
+                if (line3) {
+                    rightSection.appendChild(line3);
+                }
+                
+                // Agregar secciones a la tarjeta
+                card.appendChild(leftSection);
+                card.appendChild(rightSection);
                 
                 // Aplicar clase de comprado si está marcado
                 if (purchasedItems.has(rowId)) {
-                    tr.classList.add('purchased');
+                    card.classList.add('purchased');
                 }
                 
-                body.appendChild(tr);
+                itemsContainer.appendChild(card);
             }
 
-            // Actualizar indicadores de ordenación
-            updateSortIndicators();
-
-            // Mostrar tabla
+            // Mostrar contenedor de tarjetas
             hideLoading();
-            table.style.display = 'table';
+            itemsContainer.style.display = 'block';
         }
 
         // Función para mostrar loading
         function showLoading() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('error').style.display = 'none';
-            document.getElementById('dataTable').style.display = 'none';
+            document.getElementById('itemsContainer').style.display = 'none';
         }
 
         // Función para ocultar loading

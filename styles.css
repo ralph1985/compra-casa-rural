@@ -91,97 +91,176 @@ body {
     }
 }
 
-/* Contenedor responsive para la tabla */
-.table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* Estilos para el contenedor de tarjetas */
+.items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-table {
-    width: 100%;
-    min-width: 500px;
-    border-collapse: collapse;
+/* Estilos para cada tarjeta de producto */
+.item-card {
+    display: flex;
     background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
 
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    white-space: nowrap;
+.item-card:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border-color: #ced4da;
 }
 
-th {
-    background-color: #f8f9fa;
+/* Sección izquierda con el checkbox */
+.card-left {
+    display: flex;
+    align-items: flex-start;
+    padding-right: 16px;
+    margin-top: 2px;
+}
+
+.purchase-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Sección derecha con el contenido */
+.card-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Líneas de contenido */
+.card-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Primera línea: Producto, Cantidad, Unidad */
+.line-1 {
+    justify-content: space-between;
+}
+
+.producto {
     font-weight: bold;
+    font-size: 16px;
     color: #2c3e50;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    flex: 1;
 }
 
-/* Estilos para columnas ordenables */
-th[style*="cursor: pointer"] {
-    transition: background-color 0.2s ease;
-}
-
-th[style*="cursor: pointer"]:hover {
-    background-color: #e9ecef;
-}
-
-.sort-icon {
-    color: #6c757d;
-    margin-left: 4px;
-}
-
-@media (max-width: 768px) {
-    th, td {
-        padding: 8px;
-        font-size: 14px;
-    }
-    
-    table {
-        min-width: 600px;
-    }
-    
-    /* Hacer que las celdas permitan salto de línea en móvil */
-    td {
-        white-space: normal;
-        word-break: break-word;
-        max-width: 150px;
-    }
-    
-    /* Mantener el checkbox sin salto de línea */
-    td:first-child {
-        white-space: nowrap;
-        max-width: none;
-        width: 60px;
-    }
-}
-
-tr:hover {
+.cantidad-unidad {
+    font-weight: 600;
+    color: #495057;
     background-color: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Segunda línea: Categoría y Grupo */
+.line-2 {
+    font-size: 14px;
+}
+
+.categoria {
+    color: #6c757d;
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.grupo {
+    color: #6c757d;
+    background-color: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* Tercera línea: Notas */
+.line-3 {
+    margin-top: 4px;
+}
+
+.notas {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 13px;
+    background-color: #fff3cd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border-left: 3px solid #ffc107;
 }
 
 /* Estilos para elementos comprados */
-tr.purchased {
-    text-decoration: line-through;
+.item-card.purchased {
     opacity: 0.6;
     background-color: #f8f9fa;
 }
 
-tr.purchased:hover {
+.item-card.purchased .card-right {
+    text-decoration: line-through;
+}
+
+.item-card.purchased:hover {
     background-color: #e9ecef;
 }
 
-/* Estilo para el checkbox de comprado */
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    margin: 0;
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+    .item-card {
+        padding: 12px;
+    }
+    
+    .card-left {
+        padding-right: 12px;
+    }
+    
+    .purchase-checkbox {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .producto {
+        font-size: 15px;
+    }
+    
+    .cantidad-unidad {
+        font-size: 13px;
+    }
+    
+    .line-2 {
+        font-size: 13px;
+    }
+    
+    .categoria, .grupo {
+        font-size: 11px;
+    }
+    
+    .notas {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .line-1 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .cantidad-unidad {
+        align-self: flex-end;
+    }
 }
 
 .loading {
