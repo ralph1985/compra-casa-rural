@@ -114,6 +114,65 @@ body {
     }
 }
 
+/* Estilos para el contenedor de búsqueda */
+.search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-container input {
+    padding: 10px 40px 10px 14px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    color: #495057;
+    font-size: 14px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.search-input-container input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.search-input-container input::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+#clearSearch {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+#clearSearch:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+    transform: scale(1.1);
+}
+
+#clearSearch:active {
+    transform: scale(0.95);
+}
+
 /* Estilos para el contenedor de tarjetas */
 .items-container {
     display: flex;
