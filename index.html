@@ -12,6 +12,9 @@
     <div class="container">
         <div class="welcome-message">
             <h1>Gestión de la compra - Casa Rural</h1>
+            <button id="helpButton" class="help-button" title="Ayuda">
+                <span class="help-icon">ⓘ</span>
+            </button>
         </div>
 
         <div class="table-container">
@@ -40,6 +43,69 @@
             <div id="loading" class="loading">Cargando...</div>
             <div id="error" class="error" style="display: none;"></div>
             <div id="itemsContainer" class="items-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Modal de ayuda -->
+    <div id="helpModal" class="help-modal" style="display: none;">
+        <div class="help-modal-content">
+            <div class="help-modal-header">
+                <h3>¿Cómo usar la aplicación?</h3>
+                <button id="closeHelp" class="close-help">&times;</button>
+            </div>
+            <div class="help-modal-body">
+                <div class="help-section">
+                    <h4>🔍 Filtros y búsqueda</h4>
+                    <ul>
+                        <li><strong>Buscar producto:</strong> Escribe cualquier parte del nombre del producto para encontrarlo rápidamente
+                        </li>
+                        <li><strong>Filtrar por Grupo:</strong> Selecciona un grupo específico (ej: Desayuno, Almuerzo, Cena) para ver solo esos productos
+                        </li>
+                        <li><strong>Filtrar por Categoría:</strong> Filtra por tipo de producto (ej: Verduras, Lácteos, Carnes)
+                        </li>
+                        <li>Los números entre paréntesis muestran <strong>(comprados de total)</strong> para hacer seguimiento del progreso
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>✅ Marcar como comprado</h4>
+                    <ul>
+                        <li>Haz clic en el checkbox a la izquierda de cada producto para marcarlo como comprado
+                        </li>
+                        <li><strong>Los productos comprados se mueven automáticamente al final de la lista</strong> con una animación suave
+                        </li>
+                        <li>Si desmarcas un producto comprado, volverá al principio de la lista
+                        </li>
+                        <li>Tu progreso se guarda automáticamente en el navegador
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>🎨 Colores y organización</h4>
+                    <ul>
+                        <li>Cada <span class="help-categoria">categoría</span> tiene un color distintivo para identificarla fácilmente
+                        </li>
+                        <li>Cada <span class="help-grupo">grupo</span> también tiene su propio color único
+                        </li>
+                        <li>Los productos pendientes aparecen arriba, los comprados abajo (tachados)
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h4>💾 Guardado automático</h4>
+                    <ul>
+                        <li>Tus filtros seleccionados se guardan automáticamente
+                        </li>
+                        <li>Los productos marcados como comprados se mantienen al recargar la página
+                        </li>
+                        <li>Todo se almacena localmente en tu navegador
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -767,6 +833,26 @@
 
         // Cargar datos cuando la página esté lista
         document.addEventListener('DOMContentLoaded', loadData);
+
+        // Manejar apertura y cierre del modal de ayuda
+        const helpButton = document.getElementById('helpButton');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelp = document.getElementById('closeHelp');
+
+        helpButton.addEventListener('click', () => {
+            helpModal.style.display = 'block';
+        });
+
+        closeHelp.addEventListener('click', () => {
+            helpModal.style.display = 'none';
+        });
+
+        // Cerrar modal de ayuda si se hace clic fuera del contenido
+        window.addEventListener('click', (event) => {
+            if (event.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
     </script>
 </body>
 

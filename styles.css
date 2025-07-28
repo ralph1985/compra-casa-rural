@@ -41,6 +41,7 @@ body {
     border-radius: 8px;
     color: white;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    position: relative;
 }
 
 .welcome-message h1 {
@@ -475,4 +476,175 @@ body {
     margin: 10px 0;
     border: 1px solid #f5c6cb;
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+}
+
+/* Botón de ayuda */
+.help-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.help-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.help-icon {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Modal de ayuda */
+.help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.help-modal-content {
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.help-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 0;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 20px;
+}
+
+.help-modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.close-help {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-help:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.help-modal-body {
+    padding: 0 24px 24px;
+}
+
+.help-section {
+    margin-bottom: 24px;
+}
+
+.help-section h4 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.help-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.help-section li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: #495057;
+}
+
+.help-categoria {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    color: #1565c0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.help-grupo {
+    background: linear-gradient(135deg, #ffebee, #e8eaf6);
+    color: #c62828;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+/* Responsive para el modal */
+@media (max-width: 768px) {
+    .help-modal {
+        padding: 10px;
+    }
+    
+    .help-modal-content {
+        max-height: 90vh;
+    }
+    
+    .help-modal-header {
+        padding: 16px 20px 0;
+    }
+    
+    .help-modal-body {
+        padding: 0 20px 20px;
+    }
+    
+    .help-section h4 {
+        font-size: 1rem;
+    }
+    
+    .help-button {
+        width: 28px;
+        height: 28px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .help-icon {
+        font-size: 16px;
+    }
 }
