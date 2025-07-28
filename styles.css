@@ -152,7 +152,7 @@ body {
     border-radius: 12px;
     padding: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     position: relative;
     overflow: hidden;
 }
@@ -177,6 +177,34 @@ body {
 
 .item-card:hover::before {
     opacity: 1;
+}
+
+/* Animación para elementos en movimiento */
+.item-card.moving {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    z-index: 10;
+}
+
+/* Animación de entrada para nuevos elementos */
+.item-card.entering {
+    animation: slideInFromSide 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+    transform: translateX(-50px);
+}
+
+@keyframes slideInFromSide {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px) scale(0.95);
+    }
+    50% {
+        opacity: 0.5;
+        transform: translateX(-10px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
 }
 
 /* Sección izquierda con el checkbox */

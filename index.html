@@ -152,24 +152,6 @@
             return btoa(row.join('|')).replace(/[^a-zA-Z0-9]/g, '');
         }
 
-        // Manejar cambio de estado de compra
-        function handlePurchaseToggle(checkbox, rowId) {
-            const card = checkbox.closest('.item-card');
-
-            if (checkbox.checked) {
-                purchasedItems.add(rowId);
-                card.classList.add('purchased');
-            } else {
-                purchasedItems.delete(rowId);
-                card.classList.remove('purchased');
-            }
-
-            savePurchasedState();
-
-            // Actualizar los filtros para reflejar los nuevos conteos
-            populateFilters(originalData);
-        }
-
         // Función para parsear CSV
         function parseCSV(text) {
             const lines = text.split('\n');
@@ -504,9 +486,25 @@
                 notas: headers.indexOf('Notas')
             };
 
+            // Separar elementos comprados y no comprados
+            const dataRows = data.slice(1);
+            const notPurchased = [];
+            const purchased = [];
+
+            dataRows.forEach(row => {
+                const rowId = generateRowId(row);
+                if (purchasedItems.has(rowId)) {
+                    purchased.push(row);
+                } else {
+                    notPurchased.push(row);
+                }
+            });
+
+            // Crear tarjetas ordenadas: primero no comprados, luego comprados
+            const orderedRows = [...notPurchased, ...purchased];
+
             // Crear tarjetas de datos
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
+            orderedRows.forEach((row, index) => {
                 const rowId = generateRowId(row);
 
                 // Crear contenedor de tarjeta
@@ -610,31 +608,56 @@
                 }
 
                 itemsContainer.appendChild(card);
-            }
+            });
 
             // Mostrar contenedor de tarjetas
             hideLoading();
             itemsContainer.style.display = 'block';
         }
 
-        // Función para mostrar loading
-        function showLoading() {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
-            document.getElementById('itemsContainer').style.display = 'none';
+        // Función para mover elemento con animación
+        function moveElementToPosition(element, isMovingToEnd) {
+            // Añadir clase de animación
+            element.classList.add('moving');
+            
+            if (isMovingToEnd) {
+                element.style.transform = 'translateX(100%)';
+                element.style.opacity = '0.3';
+            } else {
+                element.style.transform = 'translateX(-100%)';
+                element.style.opacity = '0.3';
+            }
+
+            // Después de la animación, reordenar la lista
+            setTimeout(() => {
+                // Recrear la tabla con el nuevo orden
+                createTable(currentData);
+            }, 300);
         }
 
-        // Función para ocultar loading
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
+        // Manejar cambio de estado de compra
+        function handlePurchaseToggle(checkbox, rowId) {
+            const card = checkbox.closest('.item-card');
+            const wasChecked = !checkbox.checked; // Estado anterior
 
-        // Función para mostrar error
-        function showError(message) {
-            hideLoading();
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
+            if (checkbox.checked) {
+                purchasedItems.add(rowId);
+                card.classList.add('purchased');
+                // Mover al final con animación
+                moveElementToPosition(card, true);
+            } else {
+                purchasedItems.delete(rowId);
+                card.classList.remove('purchased');
+                // Mover al principio con animación
+                moveElementToPosition(card, false);
+            }
+
+            savePurchasedState();
+
+            // Actualizar los filtros para reflejar los nuevos conteos
+            setTimeout(() => {
+                populateFilters(originalData);
+            }, 350);
         }
 
         // Función para cargar datos
