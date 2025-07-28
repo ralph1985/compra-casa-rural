@@ -171,12 +171,15 @@
 
                 this.loading = true;
                 try {
+                    // Usar FormData para evitar preflight CORS
+                    const postData = new FormData();
+                    postData.append('nombre', data.nombre);
+                    postData.append('producto', data.producto);
+                    postData.append('cantidad', data.cantidad);
+
                     const response = await fetch(ENDPOINT, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
+                        body: postData
                     });
 
                     if (!response.ok) {
