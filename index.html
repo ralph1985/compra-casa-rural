@@ -16,6 +16,22 @@
 
         <div class="table-container">
             <h2>Lista de compras</h2>
+
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="grupoFilter">Filtrar por Grupo:</label>
+                    <select id="grupoFilter">
+                        <option value="">Todos los grupos</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="categoriaFilter">Filtrar por Categoría:</label>
+                    <select id="categoriaFilter">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+            </div>
+
             <div id="loading" class="loading">Cargando...</div>
             <div id="error" class="error" style="display: none;"></div>
             <table id="dataTable" style="display: none;">
@@ -31,6 +47,11 @@
         // URL del CSV de Google Sheets
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
 
+        // Variables globales para almacenar datos
+        let originalData = [];
+        let grupoColumnIndex = -1;
+        let categoriaColumnIndex = -1;
+
         // Función para parsear CSV
         function parseCSV(text) {
             const lines = text.split('\n');
@@ -45,6 +66,92 @@
             }
 
             return result;
+        }
+
+        // Función para poblar los filtros
+        function populateFilters(data) {
+            if (data.length === 0) return;
+
+            const headers = data[0];
+            
+            // Encontrar índices de las columnas
+            grupoColumnIndex = headers.indexOf('Grupo');
+            categoriaColumnIndex = headers.indexOf('Categoría');
+
+            if (grupoColumnIndex === -1 && categoriaColumnIndex === -1) return;
+
+            // Obtener valores únicos para cada filtro
+            const grupos = new Set();
+            const categorias = new Set();
+
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                if (grupoColumnIndex !== -1 && row[grupoColumnIndex]) {
+                    grupos.add(row[grupoColumnIndex]);
+                }
+                if (categoriaColumnIndex !== -1 && row[categoriaColumnIndex]) {
+                    categorias.add(row[categoriaColumnIndex]);
+                }
+            }
+
+            // Poblar selector de grupos
+            const grupoSelect = document.getElementById('grupoFilter');
+            grupoSelect.innerHTML = '<option value="">Todos los grupos</option>';
+            grupos.forEach(grupo => {
+                const option = document.createElement('option');
+                option.value = grupo;
+                option.textContent = grupo;
+                grupoSelect.appendChild(option);
+            });
+
+            // Poblar selector de categorías
+            const categoriaSelect = document.getElementById('categoriaFilter');
+            categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
+            categorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria;
+                option.textContent = categoria;
+                categoriaSelect.appendChild(option);
+            });
+
+            // Agregar event listeners
+            grupoSelect.addEventListener('change', filterData);
+            categoriaSelect.addEventListener('change', filterData);
+        }
+
+        // Función para filtrar datos
+        function filterData() {
+            const grupoFilter = document.getElementById('grupoFilter').value;
+            const categoriaFilter = document.getElementById('categoriaFilter').value;
+
+            if (!originalData.length) return;
+
+            let filteredData = [originalData[0]]; // Mantener headers
+
+            for (let i = 1; i < originalData.length; i++) {
+                const row = originalData[i];
+                let showRow = true;
+
+                // Filtrar por grupo
+                if (grupoFilter && grupoColumnIndex !== -1) {
+                    if (row[grupoColumnIndex] !== grupoFilter) {
+                        showRow = false;
+                    }
+                }
+
+                // Filtrar por categoría
+                if (categoriaFilter && categoriaColumnIndex !== -1) {
+                    if (row[categoriaColumnIndex] !== categoriaFilter) {
+                        showRow = false;
+                    }
+                }
+
+                if (showRow) {
+                    filteredData.push(row);
+                }
+            }
+
+            createTable(filteredData);
         }
 
         // Función para crear la tabla
@@ -122,6 +229,14 @@
 
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
+                
+                // Guardar datos originales
+                originalData = data;
+                
+                // Poblar filtros
+                populateFilters(data);
+                
+                // Crear tabla
                 createTable(data);
 
             } catch (error) {
