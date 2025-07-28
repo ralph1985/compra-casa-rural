@@ -42,7 +42,10 @@
             </div>
 
             <div id="loading" class="loading">Cargando...</div>
-            <div id="error" class="error" style="display: none;"></div>
+            <div id="error" class="error" style="display: none;">
+                <div class="error-message"></div>
+                <button id="retryButton" class="retry-button">🔄 Reintentar</button>
+            </div>
             <div id="itemsContainer" class="items-container" style="display: none;"></div>
         </div>
     </div>
@@ -787,8 +790,18 @@
         function showError(message) {
             hideLoading();
             const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
+            errorDiv.querySelector('.error-message').textContent = message;
             errorDiv.style.display = 'block';
+            
+            // Añadir event listener al botón de reintentar si no existe ya
+            const retryButton = document.getElementById('retryButton');
+            if (retryButton && !retryButton.hasAttribute('data-listener-added')) {
+                retryButton.addEventListener('click', () => {
+                    errorDiv.style.display = 'none';
+                    loadData();
+                });
+                retryButton.setAttribute('data-listener-added', 'true');
+            }
         }
 
         // Función para cargar datos
