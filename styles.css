@@ -62,19 +62,6 @@ body {
     overflow: hidden;
 }
 
-.table-container h2 {
-    color: #2c5530;
-    margin-bottom: 16px;
-    flex-shrink: 0;
-    font-weight: 600;
-    font-size: 1.1rem;
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 8px 12px;
-    border-radius: 6px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(252, 182, 159, 0.3);
-}
-
 .filters-container {
     display: flex;
     gap: 20px;
