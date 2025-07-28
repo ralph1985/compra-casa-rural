@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Compras - Casa Rural</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <app-compra-rural></app-compra-rural>
 
     <script type="module">
         import { LitElement, html, css } from 'https://cdn.skypack.dev/lit';
 
+        // URL del endpoint de Google Apps Script
+        const ENDPOINT = "https://script.google.com/macros/s/AKfycbwJFV6LQvH8I23pxW8-IwYHyDBL57oJ1K-VlWYZCWTfHY2oGnaplPlg5dxjfYJQFuV6/exec";
+
         class AppCompraRural extends LitElement {
+            static properties = {
+                data: { type: Array },
+                loading: { type: Boolean }
+            };
+
+            constructor() {
+                super();
+                this.data = [];
+                this.loading = false;
+                this.loadData();
+            }
+
             static styles = css`
                 :host {
                     display: block;
@@ -23,14 +40,217 @@
                 .welcome-message {
                     text-align: center;
                     color: #2c3e50;
-                    margin-bottom: 20px;
+                    margin-bottom: 30px;
+                }
+
+                .form-container {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin-bottom: 30px;
+                }
+
+                .form-container h2 {
+                    margin-top: 0;
+                    color: #2c3e50;
+                }
+
+                .form-group {
+                    margin-bottom: 15px;
+                }
+
+                .form-group label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                    color: #555;
+                }
+
+                .form-group input {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    box-sizing: border-box;
+                }
+
+                .btn-submit {
+                    background-color: #28a745;
+                    color: white;
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                .btn-submit:hover {
+                    background-color: #218838;
+                }
+
+                .btn-submit:disabled {
+                    background-color: #6c757d;
+                    cursor: not-allowed;
+                }
+
+                .table-container {
+                    overflow-x: auto;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    background: white;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                th, td {
+                    padding: 12px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+
+                th {
+                    background-color: #f8f9fa;
+                    font-weight: bold;
+                    color: #2c3e50;
+                }
+
+                tr:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .loading {
+                    text-align: center;
+                    padding: 20px;
+                    color: #666;
+                }
+
+                .error {
+                    color: #dc3545;
+                    background-color: #f8d7da;
+                    padding: 10px;
+                    border-radius: 4px;
+                    margin: 10px 0;
                 }
             `;
+
+            async loadData() {
+                this.loading = true;
+                try {
+                    const response = await fetch(ENDPOINT);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    this.data = await response.json();
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    this.data = [];
+                } finally {
+                    this.loading = false;
+                }
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+
+                const formData = new FormData(e.target);
+                const data = {
+                    nombre: formData.get('nombre'),
+                    producto: formData.get('producto'),
+                    cantidad: formData.get('cantidad')
+                };
+
+                if (!data.nombre || !data.producto || !data.cantidad) {
+                    alert('Por favor, completa todos los campos');
+                    return;
+                }
+
+                this.loading = true;
+                try {
+                    const response = await fetch(ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    // Limpiar formulario
+                    e.target.reset();
+
+                    // Recargar datos
+                    await this.loadData();
+
+                } catch (error) {
+                    console.error('Error adding data:', error);
+                    alert('Error al guardar los datos');
+                } finally {
+                    this.loading = false;
+                }
+            }
 
             render() {
                 return html`
                     <div class="welcome-message">
                         <h1>Gestión de la compra - Casa Rural</h1>
+                    </div>
+
+                    <div class="form-container">
+                        <h2>Añadir nueva compra</h2>
+                        <form @submit=${this.handleSubmit}>
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="producto">Producto:</label>
+                                <input type="text" id="producto" name="producto" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cantidad">Cantidad:</label>
+                                <input type="text" id="cantidad" name="cantidad" required>
+                            </div>
+                            <button type="submit" class="btn-submit" ?disabled=${this.loading}>
+                                ${this.loading ? 'Guardando...' : 'Añadir compra'}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <h2>Lista de compras</h2>
+                        ${this.loading ?
+                        html`<div class="loading">Cargando...</div>` :
+                        this.data.length > 0 ?
+                            html`
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Producto</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${this.data.map(row => html`
+                                                <tr>
+                                                    <td>${row[0] || ''}</td>
+                                                    <td>${row[1] || ''}</td>
+                                                    <td>${row[2] || ''}</td>
+                                                </tr>
+                                            `)}
+                                        </tbody>
+                                    </table>
+                                ` :
+                            html`<div class="loading">No hay datos disponibles</div>`
+                    }
                     </div>
                 `;
             }
@@ -39,4 +259,5 @@
         customElements.define('app-compra-rural', AppCompraRural);
     </script>
 </body>
+
 </html>
