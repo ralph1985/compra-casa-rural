@@ -336,6 +336,11 @@ body {
     overflow-y: auto;
     padding-right: 8px;
     padding-bottom: 100px;
+    /* Propiedades específicas para iOS */
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+    transform: translateZ(0); /* Fuerza aceleración por hardware */
+    will-change: scroll-position;
 }
 
 .items-container::-webkit-scrollbar {

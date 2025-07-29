@@ -1445,13 +1445,51 @@
         let lastScrollTop = 0;
         let isFiltersCollapsed = false;
         let scrollTicking = false;
+        let isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-        // Función optimizada para Safari iOS
+        // Función específica para detectar scroll en iOS
         function handleScrollEvent() {
-            if (!scrollTicking) {
-                requestAnimationFrame(updateScrollBehavior);
-                scrollTicking = true;
+            if (isIOSDevice) {
+                // En iOS usamos un enfoque directo sin requestAnimationFrame
+                updateScrollBehaviorIOS();
+            } else {
+                // En desktop/otros dispositivos usamos requestAnimationFrame
+                if (!scrollTicking) {
+                    requestAnimationFrame(updateScrollBehavior);
+                    scrollTicking = true;
+                }
             }
+        }
+
+        function updateScrollBehaviorIOS() {
+            const itemsContainer = document.getElementById('itemsContainer');
+            if (!itemsContainer) return;
+
+            const scrollTop = itemsContainer.scrollTop;
+            const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+            
+            // Lógica específica para iOS con umbrales más bajos
+            if (scrollDirection === 'down' && scrollTop > 20 && !isFiltersCollapsed) {
+                collapseFilters();
+            }
+            
+            // Detección más sensible para iOS
+            if (scrollTop <= 10 && isFiltersCollapsed) {
+                expandFilters();
+            }
+            
+            lastScrollTop = scrollTop;
+            
+            // Timeout más corto para iOS
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+            
+            scrollTimeout = setTimeout(() => {
+                if (itemsContainer.scrollTop <= 10 && isFiltersCollapsed) {
+                    expandFilters();
+                }
+            }, 1000);
         }
 
         function updateScrollBehavior() {
@@ -1464,12 +1502,11 @@
             const scrollTop = itemsContainer.scrollTop;
             const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
             
-            // Lógica para colapsar/expandir filtros
+            // Lógica para desktop
             if (scrollDirection === 'down' && scrollTop > 30 && !isFiltersCollapsed) {
                 collapseFilters();
             }
             
-            // Si scrolleamos hasta arriba del todo, expandir
             if (scrollTop <= 5 && isFiltersCollapsed) {
                 expandFilters();
             }
@@ -1477,17 +1514,15 @@
             lastScrollTop = scrollTop;
             scrollTicking = false;
             
-            // Limpiar timeout anterior
             if (scrollTimeout) {
                 clearTimeout(scrollTimeout);
             }
             
-            // Auto-expandir después de inactividad en la parte superior
             scrollTimeout = setTimeout(() => {
                 if (itemsContainer.scrollTop <= 5 && isFiltersCollapsed) {
                     expandFilters();
                 }
-            }, 1500); // Reducido a 1.5 segundos para mejor responsividad
+            }, 1500);
         }
 
         function setupScrollBehavior() {
@@ -1497,47 +1532,55 @@
             
             if (!itemsContainer || !filtersContainer || !showFiltersLink) return;
 
-            // Usar eventos específicos para iOS Safari
-            itemsContainer.addEventListener('scroll', handleScrollEvent, { passive: true });
-            
-            // Eventos adicionales para iOS
-            itemsContainer.addEventListener('touchstart', () => {
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-            }, { passive: true });
+            // Configuración específica para iOS
+            if (isIOSDevice) {
+                // Usar eventos pasivos para iOS
+                itemsContainer.addEventListener('scroll', handleScrollEvent, { 
+                    passive: true, 
+                    capture: false 
+                });
+                
+                // Eventos touch específicos para iOS
+                itemsContainer.addEventListener('touchstart', () => {
+                    if (scrollTimeout) {
+                        clearTimeout(scrollTimeout);
+                    }
+                }, { passive: true });
 
-            itemsContainer.addEventListener('touchend', () => {
-                // Verificar posición después de touch para iOS
-                setTimeout(() => {
-                    if (itemsContainer.scrollTop <= 5 && isFiltersCollapsed) {
+                itemsContainer.addEventListener('touchend', () => {
+                    setTimeout(() => {
+                        if (itemsContainer.scrollTop <= 10 && isFiltersCollapsed) {
+                            expandFilters();
+                        }
+                    }, 150);
+                }, { passive: true });
+
+                // Evento específico para iOS cuando se detiene el scroll momentum
+                itemsContainer.addEventListener('scrollend', () => {
+                    if (itemsContainer.scrollTop <= 10 && isFiltersCollapsed) {
                         expandFilters();
                     }
-                }, 100);
-            }, { passive: true });
+                }, { passive: true });
 
-            // Manejador del botón "Mostrar filtros"
+            } else {
+                // Para desktop/otros navegadores
+                itemsContainer.addEventListener('scroll', handleScrollEvent, { passive: true });
+            }
+
+            // Manejador del botón "Mostrar filtros" optimizado para iOS
             showFiltersLink.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 expandFilters();
-                // Scroll suave hacia arriba en iOS
-                itemsContainer.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                
+                // Scroll hacia arriba específico para iOS
+                if (isIOSDevice) {
+                    itemsContainer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
             });
-
-            // Detectar cuando iOS Safari hace scroll automático
-            let isUserScrolling = false;
-            itemsContainer.addEventListener('touchstart', () => {
-                isUserScrolling = true;
-            }, { passive: true });
-
-            itemsContainer.addEventListener('touchend', () => {
-                setTimeout(() => {
-                    isUserScrolling = false;
-                }, 100);
-            }, { passive: true });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
