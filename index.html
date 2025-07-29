@@ -213,6 +213,13 @@
                         Se pedirá confirmación antes de ejecutar
                     </p>
                 </div>
+
+                <div class="help-section" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e9ecef;">
+                    <div style="text-align: center; color: #6c757d; font-size: 0.85rem;">
+                        <span style="font-weight: 500;">📱 Versión de la aplicación:</span>
+                        <span style="font-family: 'Courier New', monospace; background: #f8f9fa; padding: 2px 6px; border-radius: 4px; margin-left: 8px;" id="appVersionDisplay"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1398,6 +1405,11 @@
 
             helpButton.addEventListener('click', () => {
                 helpModal.style.display = 'block';
+                // Populate version info when modal opens
+                const versionDisplay = document.getElementById('appVersionDisplay');
+                if (versionDisplay) {
+                    versionDisplay.textContent = APP_VERSION;
+                }
             });
 
             closeHelp.addEventListener('click', () => {
