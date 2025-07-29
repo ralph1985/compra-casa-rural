@@ -1296,17 +1296,19 @@ body {
     }
 }
 
-/* Estilos para ocultar filtros durante scroll */
-.filters-container.collapsed {
-    transition: all 0.3s ease-in-out;
+/* Estilos para el botón de toggle de filtros y resumen */
+.toggle-filters-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.filters-container.collapsed .hideable-filter {
-    display: none;
-}
-
-.show-filters-link {
-    display: none;
+.toggle-filters-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
@@ -1323,28 +1325,124 @@ body {
     white-space: nowrap;
 }
 
-.show-filters-link:hover {
+.toggle-filters-button:hover {
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-.filters-container.collapsed .show-filters-link {
+.toggle-icon {
+    font-size: 14px;
+}
+
+.toggle-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Contenedor de filtros - ahora siempre visible por defecto */
+.filters-content {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+    .filters-content {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .toggle-filters-button {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+    
+    .toggle-icon {
+        font-size: 12px;
+    }
+    
+    .toggle-text {
+        font-size: 11px;
+    }
+}
+
+/* Layout específico para pantallas de escritorio grandes (>1000px) */
+@media (min-width: 768px) {
+    .filters-content {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    /* Primera fila: Buscar producto, Filtrar por Grupo, Filtrar por Categoría */
+    .filters-content .filter-group:nth-child(1),
+    .filters-content .filter-group:nth-child(2),
+    .filters-content .filter-group:nth-child(3) {
+        flex: 1 1 calc(33.333% - 11px);
+        min-width: 200px;
+    }
+
+    /* Segunda fila: Estado de compra, Total de productos, Limpiar filtros */
+    .filters-content .filter-group:nth-child(4),
+    .filters-content .total-products-group,
+    .filters-content .clear-filters-group {
+        flex: 1 1 calc(33.333% - 11px);
+        min-width: 180px;
+        margin-top: 8px;
+    }
+
+    /* El estado de compra mantiene su estructura vertical */
+    .filters-content .filter-group:nth-child(4) {
+        justify-content: flex-start;
+    }
+
+    /* El contador y botón se ajustan a la altura del estado de compra */
+    .filters-content .total-products-group,
+    .filters-content .clear-filters-group {
+        align-items: flex-end;
+    }
+}
+
+/* Responsive mejorado para pantallas medianas y escritorio */
+@media (max-width: 1000px) and (min-width: 769px) {
+    .filters-content {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) and (min-width: 601px) {
+    .filters-content {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* Los 4 filtros principales en 2 filas */
+    .filters-content .filter-group:nth-child(1),
+    .filters-content .filter-group:nth-child(2) {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 160px;
+    }
+
+    .filters-content .filter-group:nth-child(3),
+    .filters-content .filter-group:nth-child(4) {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 160px;
+    }
+
+    /* Contador y botón en línea separada */
+    .filters-content .total-products-group,
+    .filters-content .clear-filters-group {
+        flex: 0 0 auto;
+        margin-top: 4px;
+    }
 }
 
 .active-filters-summary {
     display: none;
     flex-wrap: wrap;
     gap: 6px;
-    margin-left: 12px;
     align-items: center;
-}
-
-.filters-container.collapsed .active-filters-summary {
-    display: flex;
+    flex: 1;
 }
 
 .filter-tag {
@@ -1392,13 +1490,7 @@ body {
 }
 
 @media (max-width: 600px) {
-    .filters-container.collapsed .show-filters-link {
-        font-size: 11px;
-        padding: 6px 12px;
-    }
-    
     .active-filters-summary {
-        margin-left: 8px;
         gap: 4px;
     }
     
@@ -1410,4 +1502,31 @@ body {
     .filter-tag-text {
         max-width: 60px;
     }
+}
+
+/* ELIMINAR ESTILOS ANTIGUOS DE SCROLL AUTOMÁTICO */
+/* Se mantienen algunos para compatibilidad pero sin funcionalidad */
+
+/* Estilos para ocultar filtros durante scroll - DESHABILITADO */
+.filters-container.collapsed {
+    /* Sin funcionalidad - ahora se controla manualmente */
+}
+
+.filters-container.collapsed .hideable-filter {
+    /* Sin funcionalidad - ahora se controla manualmente */
+}
+
+.show-filters-link {
+    /* ELIMINADO - ya no se usa este estilo antiguo */
+    display: none !important;
+}
+
+.filters-container.collapsed .show-filters-link {
+    /* ELIMINADO - ya no se usa este estilo antiguo */
+    display: none !important;
+}
+
+.filters-container.collapsed .active-filters-summary {
+    /* ELIMINADO - ahora se controla con el nuevo sistema */
+    display: none !important;
 }

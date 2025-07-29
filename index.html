@@ -41,79 +41,84 @@
 
         <div class="table-container">
             <div class="filters-container">
-                <button class="show-filters-link" id="showFiltersLink">
-                    <span>📋</span>
-                    <span>Mostrar filtros</span>
-                </button>
-                
-                <div class="active-filters-summary" id="activeFiltersSummary">
-                </div>
-                
-                <div class="filter-group hideable-filter">
-                    <label for="productoSearch">Buscar producto:</label>
-                    <div class="search-input-container">
-                        <input type="text" id="productoSearch" placeholder="Escribe para buscar...">
-                        <button type="button" id="clearSearch" title="Limpiar búsqueda">✕</button>
-                    </div>
-                </div>
-                <div class="filter-group hideable-filter">
-                    <label for="grupoFilter">Filtrar por Grupo:</label>
-                    <select id="grupoFilter">
-                        <option value="">Todos los grupos</option>
-                    </select>
-                </div>
-                <div class="filter-group hideable-filter">
-                    <label for="categoriaFilter">Filtrar por Categoría:</label>
-                    <select id="categoriaFilter">
-                        <option value="">Todas las categorías</option>
-                    </select>
-                </div>
-                <div class="filter-group hideable-filter">
-                    <label>Estado de compra:</label>
-                    <div class="radio-group">
-                        <label class="radio-label">
-                            <input type="radio" name="estadoFilter" value="todos" checked>
-                            <span>Todos</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="estadoFilter" value="no-comprado">
-                            <span>No comprado</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="estadoFilter" value="comprado">
-                            <span>Comprado</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Total de productos disponibles -->
-                <div class="filter-group total-products-group">
-                    <div class="total-products-display">
-                        <span class="total-products-icon">📊</span>
-                        <span class="total-products-text">Total de productos:</span>
-                        <span class="total-products-count" id="totalProductsCount">0</span>
-                    </div>
-                </div>
-
-                <!-- Botón para limpiar filtros -->
-                <div class="filter-group clear-filters-group">
-                    <button id="clearAllFilters" class="clear-filters-button" title="Limpiar todos los filtros">
-                        <span class="clear-filters-icon">🗑️</span>
-                        <span class="clear-filters-text">Limpiar filtros</span>
+                <!-- Botón para mostrar/ocultar filtros manualmente -->
+                <div class="toggle-filters-section">
+                    <button class="toggle-filters-button" id="toggleFiltersButton">
+                        <span class="toggle-icon">📋</span>
+                        <span class="toggle-text">Ocultar filtros</span>
                     </button>
-                </div>
-
-                <!-- Contenedor combinado para móviles -->
-                <div class="products-and-clear-container">
-                    <div class="total-products-display">
-                        <span class="total-products-icon">📊</span>
-                        <span class="total-products-text">Total:</span>
-                        <span class="total-products-count" id="totalProductsCountMobile">0</span>
+                    
+                    <div class="active-filters-summary" id="activeFiltersSummary">
                     </div>
-                    <button id="clearAllFiltersMobile" class="clear-filters-button" title="Limpiar todos los filtros">
-                        <span class="clear-filters-icon">🗑️</span>
-                        <span class="clear-filters-text">Limpiar</span>
-                    </button>
+                </div>
+                
+                <div class="filters-content" id="filtersContent">
+                    <div class="filter-group">
+                        <label for="productoSearch">Buscar producto:</label>
+                        <div class="search-input-container">
+                            <input type="text" id="productoSearch" placeholder="Escribe para buscar...">
+                            <button type="button" id="clearSearch" title="Limpiar búsqueda">✕</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label for="grupoFilter">Filtrar por Grupo:</label>
+                        <select id="grupoFilter">
+                            <option value="">Todos los grupos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="categoriaFilter">Filtrar por Categoría:</label>
+                        <select id="categoriaFilter">
+                            <option value="">Todas las categorías</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Estado de compra:</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="estadoFilter" value="todos" checked>
+                                <span>Todos</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="estadoFilter" value="no-comprado">
+                                <span>No comprado</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="estadoFilter" value="comprado">
+                                <span>Comprado</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Total de productos disponibles -->
+                    <div class="filter-group total-products-group">
+                        <div class="total-products-display">
+                            <span class="total-products-icon">📊</span>
+                            <span class="total-products-text">Total de productos:</span>
+                            <span class="total-products-count" id="totalProductsCount">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Botón para limpiar filtros -->
+                    <div class="filter-group clear-filters-group">
+                        <button id="clearAllFilters" class="clear-filters-button" title="Limpiar todos los filtros">
+                            <span class="clear-filters-icon">🗑️</span>
+                            <span class="clear-filters-text">Limpiar filtros</span>
+                        </button>
+                    </div>
+
+                    <!-- Contenedor combinado para móviles -->
+                    <div class="products-and-clear-container">
+                        <div class="total-products-display">
+                            <span class="total-products-icon">📊</span>
+                            <span class="total-products-text">Total:</span>
+                            <span class="total-products-count" id="totalProductsCountMobile">0</span>
+                        </div>
+                        <button id="clearAllFiltersMobile" class="clear-filters-button" title="Limpiar todos los filtros">
+                            <span class="clear-filters-icon">🗑️</span>
+                            <span class="clear-filters-text">Limpiar</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -306,6 +311,7 @@
         let currentSort = { column: -1, direction: 'asc' };
         let checkInterval = null;
         let lastDataHash = null;
+        let isFiltersCollapsed = false; // Variable para controlar el estado de los filtros
 
         const colorPalettes = {
             categoria: [
@@ -425,7 +431,7 @@
             localStorage.setItem('productoSearch', productoSearch);
             localStorage.setItem('estadoFilter', estadoFilter);
 
-            // Actualizar resumen si los filtros están colapsados
+            // Actualizar resumen si los filtros están ocultos
             if (isFiltersCollapsed) {
                 updateActiveFiltersSummary();
             }
@@ -1443,146 +1449,111 @@
 
         let scrollTimeout;
         let lastScrollTop = 0;
-        let isFiltersCollapsed = false;
         let scrollTicking = false;
         let isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-        // Función específica para detectar scroll en iOS
+        // ELIMINAR TODA LA FUNCIONALIDAD AUTOMÁTICA DE SCROLL
+        // Se mantiene solo para compatibilidad pero no hace nada
         function handleScrollEvent() {
-            if (isIOSDevice) {
-                // En iOS usamos un enfoque directo sin requestAnimationFrame
-                updateScrollBehaviorIOS();
-            } else {
-                // En desktop/otros dispositivos usamos requestAnimationFrame
-                if (!scrollTicking) {
-                    requestAnimationFrame(updateScrollBehavior);
-                    scrollTicking = true;
-                }
-            }
+            // Sin funcionalidad - los filtros ahora solo se controlan manualmente
         }
 
         function updateScrollBehaviorIOS() {
-            const itemsContainer = document.getElementById('itemsContainer');
-            if (!itemsContainer) return;
-
-            const scrollTop = itemsContainer.scrollTop;
-            const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
-            
-            // Lógica específica para iOS con umbral de 50px
-            if (scrollDirection === 'down' && scrollTop > 50 && !isFiltersCollapsed) {
-                collapseFilters();
-            }
-            
-            // Detección más sensible para iOS
-            if (scrollTop <= 10 && isFiltersCollapsed) {
-                expandFilters();
-            }
-            
-            lastScrollTop = scrollTop;
-            
-            // Timeout más corto para iOS
-            if (scrollTimeout) {
-                clearTimeout(scrollTimeout);
-            }
-            
-            scrollTimeout = setTimeout(() => {
-                if (itemsContainer.scrollTop <= 10 && isFiltersCollapsed) {
-                    expandFilters();
-                }
-            }, 1000);
+            // Sin funcionalidad - los filtros ahora solo se controlan manualmente
         }
 
         function updateScrollBehavior() {
-            const itemsContainer = document.getElementById('itemsContainer');
-            if (!itemsContainer) {
-                scrollTicking = false;
-                return;
-            }
-
-            const scrollTop = itemsContainer.scrollTop;
-            const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
-            
-            // Lógica para desktop
-            if (scrollDirection === 'down' && scrollTop > 30 && !isFiltersCollapsed) {
-                collapseFilters();
-            }
-            
-            if (scrollTop <= 5 && isFiltersCollapsed) {
-                expandFilters();
-            }
-            
-            lastScrollTop = scrollTop;
-            scrollTicking = false;
-            
-            if (scrollTimeout) {
-                clearTimeout(scrollTimeout);
-            }
-            
-            scrollTimeout = setTimeout(() => {
-                if (itemsContainer.scrollTop <= 5 && isFiltersCollapsed) {
-                    expandFilters();
-                }
-            }, 1500);
+            // Sin funcionalidad - los filtros ahora solo se controlan manualmente
         }
 
         function setupScrollBehavior() {
-            const itemsContainer = document.getElementById('itemsContainer');
-            const filtersContainer = document.querySelector('.filters-container');
-            const showFiltersLink = document.getElementById('showFiltersLink');
-            
-            if (!itemsContainer || !filtersContainer || !showFiltersLink) return;
-
-            // Configuración específica para iOS
-            if (isIOSDevice) {
-                // Usar eventos pasivos para iOS
-                itemsContainer.addEventListener('scroll', handleScrollEvent, { 
-                    passive: true, 
-                    capture: false 
-                });
-                
-                // Eventos touch específicos para iOS
-                itemsContainer.addEventListener('touchstart', () => {
-                    if (scrollTimeout) {
-                        clearTimeout(scrollTimeout);
-                    }
-                }, { passive: true });
-
-                itemsContainer.addEventListener('touchend', () => {
-                    setTimeout(() => {
-                        if (itemsContainer.scrollTop <= 10 && isFiltersCollapsed) {
-                            expandFilters();
-                        }
-                    }, 150);
-                }, { passive: true });
-
-                // Evento específico para iOS cuando se detiene el scroll momentum
-                itemsContainer.addEventListener('scrollend', () => {
-                    if (itemsContainer.scrollTop <= 10 && isFiltersCollapsed) {
-                        expandFilters();
-                    }
-                }, { passive: true });
-
-            } else {
-                // Para desktop/otros navegadores
-                itemsContainer.addEventListener('scroll', handleScrollEvent, { passive: true });
-            }
-
-            // Manejador del botón "Mostrar filtros" optimizado para iOS
-            showFiltersLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                expandFilters();
-                
-                // Scroll hacia arriba específico para iOS
-                if (isIOSDevice) {
-                    itemsContainer.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            });
+            // Sin funcionalidad - los filtros ahora solo se controlan manualmente
         }
 
+        // Función para alternar entre mostrar/ocultar filtros
+        function toggleFilters() {
+            const filtersContent = document.getElementById('filtersContent');
+            const toggleButton = document.getElementById('toggleFiltersButton');
+            const toggleText = toggleButton.querySelector('.toggle-text');
+            const activeFiltersSummary = document.getElementById('activeFiltersSummary');
+            
+            if (!filtersContent || !toggleButton || !toggleText || !activeFiltersSummary) return;
+
+            if (isFiltersCollapsed) {
+                // Mostrar filtros
+                filtersContent.style.display = 'flex';
+                activeFiltersSummary.style.display = 'none';
+                toggleText.textContent = 'Ocultar filtros';
+                isFiltersCollapsed = false;
+            } else {
+                // Ocultar filtros
+                filtersContent.style.display = 'none';
+                activeFiltersSummary.style.display = 'flex';
+                toggleText.textContent = 'Mostrar filtros';
+                isFiltersCollapsed = true;
+                updateActiveFiltersSummary();
+            }
+        }
+
+        // Función para actualizar el resumen de filtros activos
+        function updateActiveFiltersSummary() {
+            const activeFiltersSummary = document.getElementById('activeFiltersSummary');
+            if (!activeFiltersSummary) return;
+
+            activeFiltersSummary.innerHTML = '';
+
+            const grupoFilter = document.getElementById('grupoFilter').value;
+            const categoriaFilter = document.getElementById('categoriaFilter').value;
+            const productoSearch = document.getElementById('productoSearch').value.trim();
+            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
+
+            // Mostrar filtro de búsqueda
+            if (productoSearch) {
+                const searchTag = document.createElement('div');
+                searchTag.className = 'filter-tag search';
+                searchTag.innerHTML = `
+                    <span class="filter-tag-icon">🔍</span>
+                    <span class="filter-tag-text" title="${productoSearch}">${productoSearch}</span>
+                `;
+                activeFiltersSummary.appendChild(searchTag);
+            }
+
+            // Mostrar filtro de grupo
+            if (grupoFilter) {
+                const groupTag = document.createElement('div');
+                groupTag.className = 'filter-tag group';
+                groupTag.innerHTML = `
+                    <span class="filter-tag-icon">👥</span>
+                    <span class="filter-tag-text" title="${grupoFilter}">${grupoFilter}</span>
+                `;
+                activeFiltersSummary.appendChild(groupTag);
+            }
+
+            // Mostrar filtro de categoría
+            if (categoriaFilter) {
+                const categoryTag = document.createElement('div');
+                categoryTag.className = 'filter-tag category';
+                categoryTag.innerHTML = `
+                    <span class="filter-tag-icon">📂</span>
+                    <span class="filter-tag-text" title="${categoriaFilter}">${categoriaFilter}</span>
+                `;
+                activeFiltersSummary.appendChild(categoryTag);
+            }
+
+            // Mostrar filtro de estado (solo si no es "todos")
+            if (estadoFilter && estadoFilter !== 'todos') {
+                const statusTag = document.createElement('div');
+                statusTag.className = 'filter-tag status';
+                const statusText = estadoFilter === 'comprado' ? 'Comprado' : 'No comprado';
+                const statusIcon = estadoFilter === 'comprado' ? '✅' : '⏳';
+                statusTag.innerHTML = `
+                    <span class="filter-tag-icon">${statusIcon}</span>
+                    <span class="filter-tag-text" title="${statusText}">${statusText}</span>
+                `;
+                activeFiltersSummary.appendChild(statusTag);
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
             const versionOK = checkAppVersion();
 
@@ -1664,28 +1635,11 @@
                 clearAllFiltersMobileButton.addEventListener('click', clearAllFilters);
             }
 
-            const showFiltersLink = document.getElementById('showFiltersLink');
-            const filtersContainer = document.querySelector('.filters-container');
-
-            showFiltersLink.addEventListener('click', () => {
-                filtersContainer.classList.toggle('expanded');
-
-                if (filtersContainer.classList.contains('expanded')) {
-                    showFiltersLink.querySelector('span:last-child').textContent = 'Ocultar filtros';
-                } else {
-                    showFiltersLink.querySelector('span:last-child').textContent = 'Mostrar filtros';
-                }
-
-                // Trigger layout update
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('resize'));
-                }, 300);
-            });
-
-            // Inicializar comportamiento de scroll después de cargar los datos
-            setTimeout(() => {
-                setupScrollBehavior();
-            }, 1000);
+            // Configurar el botón para mostrar/ocultar filtros manualmente
+            const toggleFiltersButton = document.getElementById('toggleFiltersButton');
+            if (toggleFiltersButton) {
+                toggleFiltersButton.addEventListener('click', toggleFilters);
+            }
         });
 
         function clearAllFilters() {
@@ -1827,81 +1781,6 @@
 
                 await handlePullRefresh(indicator, icon, text);
             });
-        }
-
-        function collapseFilters() {
-            const filtersContainer = document.querySelector('.filters-container');
-            if (!filtersContainer || isFiltersCollapsed) return;
-            
-            filtersContainer.classList.add('collapsed');
-            isFiltersCollapsed = true;
-            updateActiveFiltersSummary();
-        }
-
-        function expandFilters() {
-            const filtersContainer = document.querySelector('.filters-container');
-            if (!filtersContainer || !isFiltersCollapsed) return;
-            
-            filtersContainer.classList.remove('collapsed');
-            isFiltersCollapsed = false;
-        }
-
-        function updateActiveFiltersSummary() {
-            const activeFiltersSummary = document.getElementById('activeFiltersSummary');
-            if (!activeFiltersSummary) return;
-
-            activeFiltersSummary.innerHTML = '';
-
-            const grupoFilter = document.getElementById('grupoFilter').value;
-            const categoriaFilter = document.getElementById('categoriaFilter').value;
-            const productoSearch = document.getElementById('productoSearch').value.trim();
-            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
-
-            // Mostrar filtro de búsqueda
-            if (productoSearch) {
-                const searchTag = document.createElement('div');
-                searchTag.className = 'filter-tag search';
-                searchTag.innerHTML = `
-                    <span class="filter-tag-icon">🔍</span>
-                    <span class="filter-tag-text" title="${productoSearch}">${productoSearch}</span>
-                `;
-                activeFiltersSummary.appendChild(searchTag);
-            }
-
-            // Mostrar filtro de grupo
-            if (grupoFilter) {
-                const groupTag = document.createElement('div');
-                groupTag.className = 'filter-tag group';
-                groupTag.innerHTML = `
-                    <span class="filter-tag-icon">👥</span>
-                    <span class="filter-tag-text" title="${grupoFilter}">${grupoFilter}</span>
-                `;
-                activeFiltersSummary.appendChild(groupTag);
-            }
-
-            // Mostrar filtro de categoría
-            if (categoriaFilter) {
-                const categoryTag = document.createElement('div');
-                categoryTag.className = 'filter-tag category';
-                categoryTag.innerHTML = `
-                    <span class="filter-tag-icon">📂</span>
-                    <span class="filter-tag-text" title="${categoriaFilter}">${categoriaFilter}</span>
-                `;
-                activeFiltersSummary.appendChild(categoryTag);
-            }
-
-            // Mostrar filtro de estado (solo si no es "todos")
-            if (estadoFilter && estadoFilter !== 'todos') {
-                const statusTag = document.createElement('div');
-                statusTag.className = 'filter-tag status';
-                const statusText = estadoFilter === 'comprado' ? 'Comprado' : 'No comprado';
-                const statusIcon = estadoFilter === 'comprado' ? '✅' : '⏳';
-                statusTag.innerHTML = `
-                    <span class="filter-tag-icon">${statusIcon}</span>
-                    <span class="filter-tag-text" title="${statusText}">${statusText}</span>
-                `;
-                activeFiltersSummary.appendChild(statusTag);
-            }
         }
     </script>
 </body>
