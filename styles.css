@@ -152,6 +152,82 @@ body {
     display: none;
 }
 
+/* Responsive mejorado para pantallas medianas y escritorio */
+@media (max-width: 1000px) and (min-width: 769px) {
+    .filters-container {
+        gap: 12px;
+        padding: 8px;
+    }
+    
+    .filter-group label {
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+    
+    .filter-group select {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    
+    .total-products-text,
+    .clear-filters-text {
+        font-size: 11px;
+    }
+    
+    .total-products-display,
+    .clear-filters-button {
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 768px) and (min-width: 601px) {
+    .filters-container {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px;
+    }
+    
+    /* Los 4 filtros principales en 2 filas */
+    .filter-group:nth-child(1),
+    .filter-group:nth-child(2) {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 160px;
+    }
+    
+    .filter-group:nth-child(3),
+    .filter-group:nth-child(4) {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 160px;
+    }
+    
+    /* Contador y botón en línea separada */
+    .total-products-group,
+    .clear-filters-group {
+        flex: 0 0 auto;
+        margin-top: 4px;
+    }
+    
+    .filter-group label {
+        font-size: 12px;
+        margin-bottom: 2px;
+    }
+    
+    .filter-group select {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    
+    .total-products-display,
+    .clear-filters-button {
+        padding: 6px 8px;
+    }
+    
+    .total-products-text,
+    .clear-filters-text {
+        font-size: 11px;
+    }
+}
+
 .search-input-container {
     position: relative;
     display: flex;
