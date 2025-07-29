@@ -5,6 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gestión de Compras - Casa Rural</title>
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Compras Casa Rural">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Compras Casa Rural">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23667eea'/><text x='256' y='350' font-size='280' text-anchor='middle' fill='white'>🛒</text></svg>">
+    
+    <!-- Standard favicon -->
     <link rel="icon" type="image/x-icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
     <link rel="stylesheet" href="styles.css?v=2025-07-29-01">
@@ -255,6 +269,19 @@
     </div>
 
     <script>
+        // Register Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
         const APP_VERSION = "2025-07-28 23:00:00";
         const VERSION_KEY = "appVersion";

@@ -1,0 +1,41 @@
+{
+  "name": "Gestión de Compras - Casa Rural",
+  "short_name": "Compras Casa Rural",
+  "description": "Aplicación para gestionar las compras de la casa rural con filtros y seguimiento",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["shopping", "productivity"],
+  "lang": "es",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23667eea'/><text x='256' y='350' font-size='280' text-anchor='middle' fill='white'>🛒</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23667eea'/><text x='256' y='350' font-size='280' text-anchor='middle' fill='white'>🛒</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver productos no comprados",
+      "short_name": "No comprados",
+      "description": "Ver solo los productos pendientes por comprar",
+      "url": "/?filter=no-comprado",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='18' font-size='16' fill='%23667eea'>📝</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
