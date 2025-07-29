@@ -46,6 +46,9 @@
                     <span>Mostrar filtros</span>
                 </button>
                 
+                <div class="active-filters-summary" id="activeFiltersSummary">
+                </div>
+                
                 <div class="filter-group">
                     <label for="productoSearch">Buscar producto:</label>
                     <div class="search-input-container">
@@ -421,6 +424,11 @@
             localStorage.setItem('categoriaFilter', categoriaFilter);
             localStorage.setItem('productoSearch', productoSearch);
             localStorage.setItem('estadoFilter', estadoFilter);
+
+            // Actualizar resumen si los filtros están colapsados
+            if (isFiltersCollapsed) {
+                updateActiveFiltersSummary();
+            }
         }
 
         function generateRowId(row) {
@@ -1730,6 +1738,7 @@
             
             filtersContainer.classList.add('collapsed');
             isFiltersCollapsed = true;
+            updateActiveFiltersSummary();
         }
 
         function expandFilters() {
@@ -1738,6 +1747,64 @@
             
             filtersContainer.classList.remove('collapsed');
             isFiltersCollapsed = false;
+        }
+
+        function updateActiveFiltersSummary() {
+            const activeFiltersSummary = document.getElementById('activeFiltersSummary');
+            if (!activeFiltersSummary) return;
+
+            activeFiltersSummary.innerHTML = '';
+
+            const grupoFilter = document.getElementById('grupoFilter').value;
+            const categoriaFilter = document.getElementById('categoriaFilter').value;
+            const productoSearch = document.getElementById('productoSearch').value.trim();
+            const estadoFilter = document.querySelector('input[name="estadoFilter"]:checked').value;
+
+            // Mostrar filtro de búsqueda
+            if (productoSearch) {
+                const searchTag = document.createElement('div');
+                searchTag.className = 'filter-tag search';
+                searchTag.innerHTML = `
+                    <span class="filter-tag-icon">🔍</span>
+                    <span class="filter-tag-text" title="${productoSearch}">${productoSearch}</span>
+                `;
+                activeFiltersSummary.appendChild(searchTag);
+            }
+
+            // Mostrar filtro de grupo
+            if (grupoFilter) {
+                const groupTag = document.createElement('div');
+                groupTag.className = 'filter-tag group';
+                groupTag.innerHTML = `
+                    <span class="filter-tag-icon">👥</span>
+                    <span class="filter-tag-text" title="${grupoFilter}">${grupoFilter}</span>
+                `;
+                activeFiltersSummary.appendChild(groupTag);
+            }
+
+            // Mostrar filtro de categoría
+            if (categoriaFilter) {
+                const categoryTag = document.createElement('div');
+                categoryTag.className = 'filter-tag category';
+                categoryTag.innerHTML = `
+                    <span class="filter-tag-icon">📂</span>
+                    <span class="filter-tag-text" title="${categoriaFilter}">${categoriaFilter}</span>
+                `;
+                activeFiltersSummary.appendChild(categoryTag);
+            }
+
+            // Mostrar filtro de estado (solo si no es "todos")
+            if (estadoFilter && estadoFilter !== 'todos') {
+                const statusTag = document.createElement('div');
+                statusTag.className = 'filter-tag status';
+                const statusText = estadoFilter === 'comprado' ? 'Comprado' : 'No comprado';
+                const statusIcon = estadoFilter === 'comprado' ? '✅' : '⏳';
+                statusTag.innerHTML = `
+                    <span class="filter-tag-icon">${statusIcon}</span>
+                    <span class="filter-tag-text" title="${statusText}">${statusText}</span>
+                `;
+                activeFiltersSummary.appendChild(statusTag);
+            }
         }
     </script>
 </body>
