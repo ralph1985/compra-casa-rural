@@ -152,6 +152,48 @@ body {
     display: none;
 }
 
+/* Layout específico para pantallas de escritorio grandes (>1000px) */
+@media (min-width: 768px) {
+    .filters-container {
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 12px;
+    }
+    
+    /* Primera fila: Buscar producto, Filtrar por Grupo, Filtrar por Categoría */
+    .filter-group:nth-child(1),
+    .filter-group:nth-child(2),
+    .filter-group:nth-child(3) {
+        flex: 1 1 calc(33.333% - 11px);
+        min-width: 200px;
+    }
+    
+    /* Segunda fila: Estado de compra, Total de productos, Limpiar filtros */
+    .filter-group:nth-child(4),
+    .total-products-group,
+    .clear-filters-group {
+        flex: 1 1 calc(33.333% - 11px);
+        min-width: 180px;
+        margin-top: 8px;
+    }
+    
+    /* El estado de compra mantiene su estructura vertical */
+    .filter-group:nth-child(4) {
+        justify-content: flex-start;
+    }
+    
+    /* El contador y botón se ajustan a la altura del estado de compra */
+    .total-products-group,
+    .clear-filters-group {
+        align-items: flex-end;
+    }
+    
+    .total-products-display,
+    .clear-filters-button {
+        height: fit-content;
+    }
+}
+
 /* Responsive mejorado para pantallas medianas y escritorio */
 @media (max-width: 1000px) and (min-width: 769px) {
     .filters-container {
