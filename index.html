@@ -678,11 +678,8 @@
                 itemsContainer.scrollTop = 0;
             }
 
-            // Update total products count
-            const totalCountElement = document.getElementById('totalProductsCount');
-            if (totalCountElement) {
-                totalCountElement.textContent = filteredData.length > 1 ? filteredData.length - 1 : '0';
-            }
+            // Keep total products count FIXED - always show total from original data
+            updateTotalProductsCount();
         }
 
         function createTable(data) {
@@ -1539,6 +1536,14 @@
 
         function updateAppVersion() {
             localStorage.setItem(VERSION_KEY, APP_VERSION);
+        }
+
+        // Function to update total products count - always shows original total
+        function updateTotalProductsCount() {
+            const totalCountElement = document.getElementById('totalProductsCount');
+            if (totalCountElement && originalData.length > 1) {
+                totalCountElement.textContent = originalData.length - 1; // -1 to exclude header row
+            }
         }
     </script>
 </body>
