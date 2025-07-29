@@ -1,5 +1,10 @@
 const CACHE_NAME = "compra-casa-rural-v1";
-const urlsToCache = ["/", "/index.html", "/styles.css", "/manifest.json"];
+const urlsToCache = [
+  "/compra-casa-rural/",
+  "/compra-casa-rural/index.html",
+  "/compra-casa-rural/styles.css",
+  "/compra-casa-rural/manifest.json",
+];
 
 // Install event - cache resources
 self.addEventListener("install", (event) => {

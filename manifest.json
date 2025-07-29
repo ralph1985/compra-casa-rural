@@ -2,12 +2,12 @@
   "name": "Gestión de Compras - Casa Rural",
   "short_name": "Compras Casa Rural",
   "description": "Aplicación para gestionar las compras de la casa rural con filtros y seguimiento",
-  "start_url": "/",
+  "start_url": "/compra-casa-rural/",
   "display": "standalone",
   "background_color": "#f5f7fa",
   "theme_color": "#667eea",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "/compra-casa-rural/",
   "categories": ["shopping", "productivity"],
   "lang": "es",
   "icons": [
@@ -29,7 +29,7 @@
       "name": "Ver productos no comprados",
       "short_name": "No comprados",
       "description": "Ver solo los productos pendientes por comprar",
-      "url": "/?filter=no-comprado",
+      "url": "/compra-casa-rural/?filter=no-comprado",
       "icons": [
         {
           "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='18' font-size='16' fill='%23667eea'>📝</text></svg>",
