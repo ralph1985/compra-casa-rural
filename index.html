@@ -7,7 +7,7 @@
     <title>Gestión de Compras - Casa Rural</title>
     <link rel="icon" type="image/x-icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2025-07-29-01">
 </head>
 
 <body>
@@ -1289,12 +1289,8 @@
 
                         try {
                             await new Promise(resolve => setTimeout(resolve, 500));
-                            await loadData();
-
-                            text.textContent = '¡Actualizado!';
-                            icon.textContent = '✓';
-
-                            await new Promise(resolve => setTimeout(resolve, 800));
+                            // Force a complete page reload instead of just reloading data
+                            location.reload(true); // true forces reload from server, bypassing cache
 
                         } catch (error) {
                             console.error('Error during pull to refresh:', error);
@@ -1374,11 +1370,8 @@
 
                         try {
                             await new Promise(resolve => setTimeout(resolve, 500));
-                            await loadData();
-
-                            text.textContent = '¡Actualizado!';
-                            icon.textContent = '✓';
-                            await new Promise(resolve => setTimeout(resolve, 800));
+                            // Force a complete page reload instead of just reloading data
+                            location.reload(true); // true forces reload from server, bypassing cache
 
                         } catch (error) {
                             console.error('Error during pull to refresh:', error);
@@ -1452,11 +1445,8 @@
 
                     try {
                         await new Promise(resolve => setTimeout(resolve, 500));
-                        await loadData();
-
-                        text.textContent = '¡Actualizado!';
-                        icon.textContent = '✓';
-                        await new Promise(resolve => setTimeout(resolve, 800));
+                        // Force a complete page reload instead of just reloading data
+                        location.reload(true); // true forces reload from server, bypassing cache
 
                     } catch (error) {
                         console.error('Error during pull to refresh:', error);
