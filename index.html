@@ -41,6 +41,11 @@
 
         <div class="table-container">
             <div class="filters-container">
+                <button class="show-filters-link" id="showFiltersLink">
+                    <span>📋</span>
+                    <span>Mostrar filtros</span>
+                </button>
+                
                 <div class="filter-group">
                     <label for="productoSearch">Buscar producto:</label>
                     <div class="search-input-container">
@@ -1554,6 +1559,29 @@
             if (clearAllFiltersMobileButton) {
                 clearAllFiltersMobileButton.addEventListener('click', clearAllFilters);
             }
+
+            const showFiltersLink = document.getElementById('showFiltersLink');
+            const filtersContainer = document.querySelector('.filters-container');
+
+            showFiltersLink.addEventListener('click', () => {
+                filtersContainer.classList.toggle('expanded');
+
+                if (filtersContainer.classList.contains('expanded')) {
+                    showFiltersLink.querySelector('span:last-child').textContent = 'Ocultar filtros';
+                } else {
+                    showFiltersLink.querySelector('span:last-child').textContent = 'Mostrar filtros';
+                }
+
+                // Trigger layout update
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('resize'));
+                }, 300);
+            });
+
+            // Inicializar comportamiento de scroll después de cargar los datos
+            setTimeout(() => {
+                setupScrollBehavior();
+            }, 1000);
         });
 
         function clearAllFilters() {
@@ -1651,12 +1679,65 @@
             localStorage.setItem(VERSION_KEY, APP_VERSION);
         }
 
-        // Function to update total products count - always shows original total
-        function updateTotalProductsCount() {
-            const totalCountElement = document.getElementById('totalProductsCount');
-            if (totalCountElement && originalData.length > 1) {
-                totalCountElement.textContent = originalData.length - 1; // -1 to exclude header row
-            }
+        let scrollTimeout;
+        let lastScrollTop = 0;
+        let isFiltersCollapsed = false;
+
+        function setupScrollBehavior() {
+            const itemsContainer = document.getElementById('itemsContainer');
+            const filtersContainer = document.querySelector('.filters-container');
+            const showFiltersLink = document.getElementById('showFiltersLink');
+            
+            if (!itemsContainer || !filtersContainer || !showFiltersLink) return;
+
+            itemsContainer.addEventListener('scroll', () => {
+                const scrollTop = itemsContainer.scrollTop;
+                
+                // Si scrolleamos hacia abajo y no están colapsados, los colapsamos
+                if (scrollTop > lastScrollTop && scrollTop > 20 && !isFiltersCollapsed) {
+                    collapseFilters();
+                }
+                
+                // Si scrolleamos hasta arriba, los expandimos
+                if (scrollTop === 0 && isFiltersCollapsed) {
+                    expandFilters();
+                }
+                
+                lastScrollTop = scrollTop;
+                
+                // Limpiar timeout anterior
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+                
+                // Si paramos de scrollear por 2 segundos y estamos arriba, expandir
+                scrollTimeout = setTimeout(() => {
+                    if (scrollTop === 0 && isFiltersCollapsed) {
+                        expandFilters();
+                    }
+                }, 2000);
+            });
+
+            // Manejador del botón "Mostrar filtros"
+            showFiltersLink.addEventListener('click', () => {
+                expandFilters();
+            });
+        }
+
+        function collapseFilters() {
+            const filtersContainer = document.querySelector('.filters-container');
+            if (!filtersContainer || isFiltersCollapsed) return;
+            
+            filtersContainer.classList.add('collapsed');
+            isFiltersCollapsed = true;
+        }
+
+        function expandFilters() {
+            const filtersContainer = document.querySelector('.filters-container');
+            if (!filtersContainer || !isFiltersCollapsed) return;
+            
+            filtersContainer.classList.remove('collapsed');
+            isFiltersCollapsed = false;
         }
     </script>
 </body>

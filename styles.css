@@ -1290,3 +1290,52 @@ body {
         height: 18px;
     }
 }
+
+/* Estilos para ocultar filtros durante scroll */
+.filters-container.collapsed {
+    transition: all 0.3s ease-in-out;
+}
+
+.filters-container.collapsed .filter-group:nth-child(1),
+.filters-container.collapsed .filter-group:nth-child(2),
+.filters-container.collapsed .filter-group:nth-child(3),
+.filters-container.collapsed .filter-group:nth-child(4) {
+    display: none;
+}
+
+.show-filters-link {
+    display: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+    user-select: none;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.show-filters-link:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.filters-container.collapsed .show-filters-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+@media (max-width: 600px) {
+    .filters-container.collapsed .show-filters-link {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+}
