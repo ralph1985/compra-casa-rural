@@ -1441,50 +1441,103 @@
             });
         }
 
-        function initPullToRefresh() {
-            const containers = [
-                document.querySelector('.welcome-message'),
-                document.querySelector('.items-container')
-            ];
-            const indicator = document.getElementById('pullToRefreshIndicator');
-            const icon = indicator.querySelector('.pull-refresh-icon');
-            const text = indicator.querySelector('.pull-refresh-text');
+        let scrollTimeout;
+        let lastScrollTop = 0;
+        let isFiltersCollapsed = false;
+        let scrollTicking = false;
 
-            // Shared state object
-            const globalState = {
-                isTouching: false,
-                canPull: false,
-                isMouseDown: false
-            };
+        // Función optimizada para Safari iOS
+        function handleScrollEvent() {
+            if (!scrollTicking) {
+                requestAnimationFrame(updateScrollBehavior);
+                scrollTicking = true;
+            }
+        }
 
-            containers.forEach(container => {
-                if (!container) return;
+        function updateScrollBehavior() {
+            const itemsContainer = document.getElementById('itemsContainer');
+            if (!itemsContainer) {
+                scrollTicking = false;
+                return;
+            }
 
-                setupTouchEvents(container, indicator, icon, text, globalState);
-                setupMouseEvents(container, indicator, icon, text, globalState);
-            });
-
-            // Global mouse events for desktop (when mouse leaves container)
-            document.addEventListener('mousemove', (e) => {
-                if (!globalState.isMouseDown || !globalState.canPull || isRefreshing) return;
-
-                currentY = e.clientY;
-                pullDistance = Math.max(0, currentY - startY);
-                pullDistance = Math.min(pullDistance, MAX_PULL_DISTANCE);
-
-                if (pullDistance > 10) {
-                    updatePullIndicator(indicator, icon, text, pullDistance);
+            const scrollTop = itemsContainer.scrollTop;
+            const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+            
+            // Lógica para colapsar/expandir filtros
+            if (scrollDirection === 'down' && scrollTop > 30 && !isFiltersCollapsed) {
+                collapseFilters();
+            }
+            
+            // Si scrolleamos hasta arriba del todo, expandir
+            if (scrollTop <= 5 && isFiltersCollapsed) {
+                expandFilters();
+            }
+            
+            lastScrollTop = scrollTop;
+            scrollTicking = false;
+            
+            // Limpiar timeout anterior
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+            
+            // Auto-expandir después de inactividad en la parte superior
+            scrollTimeout = setTimeout(() => {
+                if (itemsContainer.scrollTop <= 5 && isFiltersCollapsed) {
+                    expandFilters();
                 }
+            }, 1500); // Reducido a 1.5 segundos para mejor responsividad
+        }
+
+        function setupScrollBehavior() {
+            const itemsContainer = document.getElementById('itemsContainer');
+            const filtersContainer = document.querySelector('.filters-container');
+            const showFiltersLink = document.getElementById('showFiltersLink');
+            
+            if (!itemsContainer || !filtersContainer || !showFiltersLink) return;
+
+            // Usar eventos específicos para iOS Safari
+            itemsContainer.addEventListener('scroll', handleScrollEvent, { passive: true });
+            
+            // Eventos adicionales para iOS
+            itemsContainer.addEventListener('touchstart', () => {
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+            }, { passive: true });
+
+            itemsContainer.addEventListener('touchend', () => {
+                // Verificar posición después de touch para iOS
+                setTimeout(() => {
+                    if (itemsContainer.scrollTop <= 5 && isFiltersCollapsed) {
+                        expandFilters();
+                    }
+                }, 100);
+            }, { passive: true });
+
+            // Manejador del botón "Mostrar filtros"
+            showFiltersLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                expandFilters();
+                // Scroll suave hacia arriba en iOS
+                itemsContainer.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
 
-            document.addEventListener('mouseup', async (e) => {
-                if (!globalState.isMouseDown || !globalState.canPull) return;
+            // Detectar cuando iOS Safari hace scroll automático
+            let isUserScrolling = false;
+            itemsContainer.addEventListener('touchstart', () => {
+                isUserScrolling = true;
+            }, { passive: true });
 
-                globalState.isMouseDown = false;
-                globalState.canPull = false;
-
-                await handlePullRefresh(indicator, icon, text);
-            });
+            itemsContainer.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    isUserScrolling = false;
+                }, 100);
+            }, { passive: true });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1687,48 +1740,49 @@
             localStorage.setItem(VERSION_KEY, APP_VERSION);
         }
 
-        let scrollTimeout;
-        let lastScrollTop = 0;
-        let isFiltersCollapsed = false;
+        function initPullToRefresh() {
+            const containers = [
+                document.querySelector('.welcome-message'),
+                document.querySelector('.items-container')
+            ];
+            const indicator = document.getElementById('pullToRefreshIndicator');
+            const icon = indicator.querySelector('.pull-refresh-icon');
+            const text = indicator.querySelector('.pull-refresh-text');
 
-        function setupScrollBehavior() {
-            const itemsContainer = document.getElementById('itemsContainer');
-            const filtersContainer = document.querySelector('.filters-container');
-            const showFiltersLink = document.getElementById('showFiltersLink');
-            
-            if (!itemsContainer || !filtersContainer || !showFiltersLink) return;
+            // Shared state object
+            const globalState = {
+                isTouching: false,
+                canPull: false,
+                isMouseDown: false
+            };
 
-            itemsContainer.addEventListener('scroll', () => {
-                const scrollTop = itemsContainer.scrollTop;
-                
-                // Si scrolleamos hacia abajo y no están colapsados, los colapsamos
-                if (scrollTop > lastScrollTop && scrollTop > 20 && !isFiltersCollapsed) {
-                    collapseFilters();
-                }
-                
-                // Si scrolleamos hasta arriba, los expandimos
-                if (scrollTop === 0 && isFiltersCollapsed) {
-                    expandFilters();
-                }
-                
-                lastScrollTop = scrollTop;
-                
-                // Limpiar timeout anterior
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-                
-                // Si paramos de scrollear por 2 segundos y estamos arriba, expandir
-                scrollTimeout = setTimeout(() => {
-                    if (scrollTop === 0 && isFiltersCollapsed) {
-                        expandFilters();
-                    }
-                }, 2000);
+            containers.forEach(container => {
+                if (!container) return;
+
+                setupTouchEvents(container, indicator, icon, text, globalState);
+                setupMouseEvents(container, indicator, icon, text, globalState);
             });
 
-            // Manejador del botón "Mostrar filtros"
-            showFiltersLink.addEventListener('click', () => {
-                expandFilters();
+            // Global mouse events for desktop (when mouse leaves container)
+            document.addEventListener('mousemove', (e) => {
+                if (!globalState.isMouseDown || !globalState.canPull || isRefreshing) return;
+
+                currentY = e.clientY;
+                pullDistance = Math.max(0, currentY - startY);
+                pullDistance = Math.min(pullDistance, MAX_PULL_DISTANCE);
+
+                if (pullDistance > 10) {
+                    updatePullIndicator(indicator, icon, text, pullDistance);
+                }
+            });
+
+            document.addEventListener('mouseup', async (e) => {
+                if (!globalState.isMouseDown || !globalState.canPull) return;
+
+                globalState.isMouseDown = false;
+                globalState.canPull = false;
+
+                await handlePullRefresh(indicator, icon, text);
             });
         }
 
