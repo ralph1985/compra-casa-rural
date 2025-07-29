@@ -1448,6 +1448,65 @@
                 });
             }
         });
+
+        async function checkForDataChanges() {
+            try {
+                const timestamp = new Date().getTime();
+                const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
+                const response = await fetch(urlWithCache);
+
+                if (!response.ok) {
+                    console.log('Error al verificar cambios:', response.status);
+                    return;
+                }
+
+                const csvText = await response.text();
+                const newData = parseCSV(csvText);
+                const newDataHash = generateDataHash(newData);
+
+                if (lastDataHash && lastDataHash !== newDataHash) {
+                    console.log('Cambios detectados en los datos');
+                    showChangesDetectedPopup();
+                    if (checkInterval) {
+                        clearInterval(checkInterval);
+                        checkInterval = null;
+                    }
+                }
+
+                lastDataHash = newDataHash;
+
+            } catch (error) {
+                console.log('Error al verificar cambios:', error);
+            }
+        }
+
+        function startDataChangeTimer() {
+            checkInterval = setInterval(checkForDataChanges, 30000);
+            console.log('Temporizador de verificación de cambios iniciado (cada 30s)');
+        }
+
+        function stopDataChangeTimer() {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+                console.log('Temporizador de verificación detenido');
+            }
+        }
+
+        function checkAppVersion() {
+            const savedVersion = localStorage.getItem(VERSION_KEY);
+
+            if (savedVersion !== APP_VERSION) {
+                showVersionUpdateModal();
+                return false;
+            }
+
+            return true;
+        }
+
+        function updateAppVersion() {
+            localStorage.setItem(VERSION_KEY, APP_VERSION);
+        }
     </script>
 </body>
 
