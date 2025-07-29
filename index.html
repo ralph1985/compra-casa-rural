@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gestión de Compras - Casa Rural</title>
-    
+
     <!-- PWA Configuration -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#667eea">
@@ -14,10 +14,11 @@
     <meta name="apple-mobile-web-app-title" content="Compras Casa Rural">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Compras Casa Rural">
-    
+
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23667eea'/><text x='256' y='350' font-size='280' text-anchor='middle' fill='white'>🛒</text></svg>">
-    
+    <link rel="apple-touch-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%23667eea'/><text x='256' y='350' font-size='280' text-anchor='middle' fill='white'>🛒</text></svg>">
+
     <!-- Standard favicon -->
     <link rel="icon" type="image/x-icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
@@ -261,7 +262,9 @@
                 <div class="help-section" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e9ecef;">
                     <div style="text-align: center; color: #6c757d; font-size: 0.85rem;">
                         <span style="font-weight: 500;">📱 Versión de la aplicación:</span>
-                        <span style="font-family: 'Courier New', monospace; background: #f8f9fa; padding: 2px 6px; border-radius: 4px; margin-left: 8px;" id="appVersionDisplay"></span>
+                        <span
+                            style="font-family: 'Courier New', monospace; background: #f8f9fa; padding: 2px 6px; border-radius: 4px; margin-left: 8px;"
+                            id="appVersionDisplay"></span>
                     </div>
                 </div>
             </div>
@@ -1197,7 +1200,7 @@
 
         function showVersionUpdateModal() {
             addFadeInAnimation();
-            
+
             const overlay = createModalOverlay('versionUpdateOverlay', 3000);
             overlay.style.background = 'rgba(0, 0, 0, 0.8)';
             overlay.style.backdropFilter = 'blur(8px)';
@@ -1575,7 +1578,7 @@
 
                     // Save the cleared state
                     saveFiltersState();
-                    
+
                     // Update UI
                     updateFiltersBasedOnSelection();
                     filterData();

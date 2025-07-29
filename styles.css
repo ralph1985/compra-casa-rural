@@ -159,7 +159,7 @@ body {
         gap: 16px;
         padding: 12px;
     }
-    
+
     /* Primera fila: Buscar producto, Filtrar por Grupo, Filtrar por Categoría */
     .filter-group:nth-child(1),
     .filter-group:nth-child(2),
@@ -167,7 +167,7 @@ body {
         flex: 1 1 calc(33.333% - 11px);
         min-width: 200px;
     }
-    
+
     /* Segunda fila: Estado de compra, Total de productos, Limpiar filtros */
     .filter-group:nth-child(4),
     .total-products-group,
@@ -176,18 +176,18 @@ body {
         min-width: 180px;
         margin-top: 8px;
     }
-    
+
     /* El estado de compra mantiene su estructura vertical */
     .filter-group:nth-child(4) {
         justify-content: flex-start;
     }
-    
+
     /* El contador y botón se ajustan a la altura del estado de compra */
     .total-products-group,
     .clear-filters-group {
         align-items: flex-end;
     }
-    
+
     .total-products-display,
     .clear-filters-button {
         height: fit-content;
@@ -200,22 +200,22 @@ body {
         gap: 12px;
         padding: 8px;
     }
-    
+
     .filter-group label {
         font-size: 12px;
         margin-bottom: 3px;
     }
-    
+
     .filter-group select {
         font-size: 12px;
         padding: 6px 8px;
     }
-    
+
     .total-products-text,
     .clear-filters-text {
         font-size: 11px;
     }
-    
+
     .total-products-display,
     .clear-filters-button {
         padding: 6px 8px;
@@ -228,42 +228,42 @@ body {
         gap: 8px;
         padding: 8px;
     }
-    
+
     /* Los 4 filtros principales en 2 filas */
     .filter-group:nth-child(1),
     .filter-group:nth-child(2) {
         flex: 1 1 calc(50% - 4px);
         min-width: 160px;
     }
-    
+
     .filter-group:nth-child(3),
     .filter-group:nth-child(4) {
         flex: 1 1 calc(50% - 4px);
         min-width: 160px;
     }
-    
+
     /* Contador y botón en línea separada */
     .total-products-group,
     .clear-filters-group {
         flex: 0 0 auto;
         margin-top: 4px;
     }
-    
+
     .filter-group label {
         font-size: 12px;
         margin-bottom: 2px;
     }
-    
+
     .filter-group select {
         font-size: 12px;
         padding: 6px 8px;
     }
-    
+
     .total-products-display,
     .clear-filters-button {
         padding: 6px 8px;
     }
-    
+
     .total-products-text,
     .clear-filters-text {
         font-size: 11px;
@@ -859,7 +859,7 @@ body {
     .radio-group {
         gap: 6px;
     }
-    
+
     .radio-label {
         font-size: 11px;
     }
@@ -917,19 +917,19 @@ body {
         align-self: center;
         margin-top: 6px;
     }
-    
+
     .total-products-display {
         padding: 6px 10px;
     }
-    
+
     .total-products-icon {
         font-size: 14px;
     }
-    
+
     .total-products-text {
         font-size: 11px;
     }
-    
+
     .total-products-count {
         font-size: 12px;
         padding: 1px 6px;
@@ -985,15 +985,15 @@ body {
         align-self: center;
         margin-top: 6px;
     }
-    
+
     .clear-filters-button {
         padding: 6px 10px;
     }
-    
+
     .clear-filters-icon {
         font-size: 12px;
     }
-    
+
     .clear-filters-text {
         font-size: 11px;
     }
@@ -1087,6 +1087,7 @@ body {
         opacity: 0;
         transform: scale(0.9) translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -1188,15 +1189,15 @@ body {
     .confirmation-modal {
         padding: 10px;
     }
-    
+
     .confirmation-modal-content {
         max-width: 100%;
     }
-    
+
     .confirmation-modal-footer {
         flex-direction: column;
     }
-    
+
     .confirm-button,
     .cancel-button {
         max-width: none;
@@ -1255,8 +1256,13 @@ body {
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Adjust container for pull to refresh */
@@ -1277,7 +1283,7 @@ body {
         padding: 10px 16px;
         top: 60px;
     }
-    
+
     .pull-refresh-icon {
         font-size: 14px;
         width: 18px;
