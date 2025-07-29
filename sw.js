@@ -1,4 +1,4 @@
-const CACHE_NAME = "compra-casa-rural-v1";
+const CACHE_NAME = "compra-casa-rural-v2025-07-30-02";
 const urlsToCache = [
   "/compra-casa-rural/",
   "/compra-casa-rural/index.html",
