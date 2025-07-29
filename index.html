@@ -1468,8 +1468,8 @@
             const scrollTop = itemsContainer.scrollTop;
             const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
             
-            // Lógica específica para iOS con umbrales más bajos
-            if (scrollDirection === 'down' && scrollTop > 20 && !isFiltersCollapsed) {
+            // Lógica específica para iOS con umbral de 50px
+            if (scrollDirection === 'down' && scrollTop > 50 && !isFiltersCollapsed) {
                 collapseFilters();
             }
             
