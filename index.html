@@ -262,6 +262,15 @@
         let categoriaColors = new Map();
         let grupoColors = new Map();
 
+        // Function to normalize text by removing accents/tildes
+        function normalizeText(text) {
+            if (!text) return '';
+            return text
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, ''); // Remove diacritical marks
+        }
+
         function getCategoriaColor(categoria) {
             if (!categoria) return null;
 
@@ -616,8 +625,9 @@
                 }
 
                 if (productoSearch && productoColumnIndex !== -1) {
-                    const producto = (row[productoColumnIndex] || '').toLowerCase();
-                    if (!producto.includes(productoSearch)) {
+                    const producto = normalizeText(row[productoColumnIndex] || '');
+                    const searchTerm = normalizeText(productoSearch);
+                    if (!producto.includes(searchTerm)) {
                         showRow = false;
                     }
                 }
