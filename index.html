@@ -62,6 +62,15 @@
                         </label>
                     </div>
                 </div>
+
+                <!-- Total de productos disponibles -->
+                <div class="filter-group total-products-group">
+                    <div class="total-products-display">
+                        <span class="total-products-icon">📊</span>
+                        <span class="total-products-text">Total de productos:</span>
+                        <span class="total-products-count" id="totalProductsCount">0</span>
+                    </div>
+                </div>
             </div>
 
             <div id="loading" class="loading">Cargando...</div>
@@ -668,6 +677,12 @@
             if (itemsContainer) {
                 itemsContainer.scrollTop = 0;
             }
+
+            // Update total products count
+            const totalCountElement = document.getElementById('totalProductsCount');
+            if (totalCountElement) {
+                totalCountElement.textContent = filteredData.length > 1 ? filteredData.length - 1 : '0';
+            }
         }
 
         function createTable(data) {
@@ -933,6 +948,12 @@
                         filterData();
                     } else {
                         createTable(data);
+                    }
+
+                    // Initialize total products count - show total from original data
+                    const totalCountElement = document.getElementById('totalProductsCount');
+                    if (totalCountElement && originalData.length > 1) {
+                        totalCountElement.textContent = originalData.length - 1; // -1 to exclude header row
                     }
                 }, 100);
 

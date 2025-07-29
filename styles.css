@@ -723,6 +723,77 @@ body {
     }
 }
 
+/* Estilos para el contador de total de productos */
+.total-products-group {
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.total-products-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid #8bc34a;
+    box-shadow: 0 2px 8px rgba(139, 195, 74, 0.3);
+    transition: all 0.3s ease;
+}
+
+.total-products-display:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 195, 74, 0.4);
+}
+
+.total-products-icon {
+    font-size: 16px;
+}
+
+.total-products-text {
+    font-weight: 600;
+    color: #2e7d32;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.total-products-count {
+    font-weight: 700;
+    color: #1b5e20;
+    font-size: 14px;
+    background: #ffffff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 24px;
+    text-align: center;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+    .total-products-group {
+        align-self: center;
+        margin-top: 6px;
+    }
+    
+    .total-products-display {
+        padding: 6px 10px;
+    }
+    
+    .total-products-icon {
+        font-size: 14px;
+    }
+    
+    .total-products-text {
+        font-size: 11px;
+    }
+    
+    .total-products-count {
+        font-size: 12px;
+        padding: 1px 6px;
+    }
+}
+
 /* Sección de peligro en la modal de ayuda */
 .danger-section {
     background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
