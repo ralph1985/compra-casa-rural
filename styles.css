@@ -126,6 +126,30 @@ body {
     .filter-group label {
         margin-bottom: 2px;
     }
+
+    /* Ocultar elementos individuales en móvil */
+    .total-products-group,
+    .clear-filters-group {
+        display: none;
+    }
+
+    /* Mostrar contenedor combinado en móvil */
+    .products-and-clear-container {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 6px;
+        padding: 8px 12px;
+        background: linear-gradient(135deg, #f0f8f0 0%, #ffe8e8 100%);
+        border-radius: 8px;
+        border: 1px solid rgba(139, 195, 74, 0.3);
+    }
+}
+
+/* Ocultar contenedor combinado en desktop */
+.products-and-clear-container {
+    display: none;
 }
 
 .search-input-container {
@@ -791,6 +815,69 @@ body {
     .total-products-count {
         font-size: 12px;
         padding: 1px 6px;
+    }
+}
+
+/* Estilos para el botón de limpiar filtros */
+.clear-filters-group {
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.clear-filters-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    white-space: nowrap;
+}
+
+.clear-filters-button:hover {
+    background: linear-gradient(135deg, #ee5a24 0%, #c44569 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.clear-filters-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.3);
+}
+
+.clear-filters-icon {
+    font-size: 14px;
+}
+
+.clear-filters-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .clear-filters-group {
+        align-self: center;
+        margin-top: 6px;
+    }
+    
+    .clear-filters-button {
+        padding: 6px 10px;
+    }
+    
+    .clear-filters-icon {
+        font-size: 12px;
+    }
+    
+    .clear-filters-text {
+        font-size: 11px;
     }
 }
 

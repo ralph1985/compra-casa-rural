@@ -71,6 +71,27 @@
                         <span class="total-products-count" id="totalProductsCount">0</span>
                     </div>
                 </div>
+
+                <!-- Botón para limpiar filtros -->
+                <div class="filter-group clear-filters-group">
+                    <button id="clearAllFilters" class="clear-filters-button" title="Limpiar todos los filtros">
+                        <span class="clear-filters-icon">🗑️</span>
+                        <span class="clear-filters-text">Limpiar filtros</span>
+                    </button>
+                </div>
+
+                <!-- Contenedor combinado para móviles -->
+                <div class="products-and-clear-container">
+                    <div class="total-products-display">
+                        <span class="total-products-icon">📊</span>
+                        <span class="total-products-text">Total:</span>
+                        <span class="total-products-count" id="totalProductsCountMobile">0</span>
+                    </div>
+                    <button id="clearAllFiltersMobile" class="clear-filters-button" title="Limpiar todos los filtros">
+                        <span class="clear-filters-icon">🗑️</span>
+                        <span class="clear-filters-text">Limpiar</span>
+                    </button>
+                </div>
             </div>
 
             <div id="loading" class="loading">Cargando...</div>
@@ -682,6 +703,18 @@
             updateTotalProductsCount();
         }
 
+        // Function to update total products count - always shows original total
+        function updateTotalProductsCount() {
+            const totalCountElement = document.getElementById('totalProductsCount');
+            const totalCountElementMobile = document.getElementById('totalProductsCountMobile');
+            if (totalCountElement && originalData.length > 1) {
+                totalCountElement.textContent = originalData.length - 1; // -1 to exclude header row
+            }
+            if (totalCountElementMobile && originalData.length > 1) {
+                totalCountElementMobile.textContent = originalData.length - 1; // -1 to exclude header row
+            }
+        }
+
         function createTable(data) {
             const itemsContainer = document.getElementById('itemsContainer');
 
@@ -949,8 +982,12 @@
 
                     // Initialize total products count - show total from original data
                     const totalCountElement = document.getElementById('totalProductsCount');
+                    const totalCountElementMobile = document.getElementById('totalProductsCountMobile');
                     if (totalCountElement && originalData.length > 1) {
                         totalCountElement.textContent = originalData.length - 1; // -1 to exclude header row
+                    }
+                    if (totalCountElementMobile && originalData.length > 1) {
+                        totalCountElementMobile.textContent = originalData.length - 1; // -1 to exclude header row
                     }
                 }, 100);
 
@@ -1477,7 +1514,53 @@
                     }
                 });
             }
+
+            const clearAllFiltersButton = document.getElementById('clearAllFilters');
+            if (clearAllFiltersButton) {
+                clearAllFiltersButton.addEventListener('click', clearAllFilters);
+            }
+
+            const clearAllFiltersMobileButton = document.getElementById('clearAllFiltersMobile');
+            if (clearAllFiltersMobileButton) {
+                clearAllFiltersMobileButton.addEventListener('click', clearAllFilters);
+            }
         });
+
+        function clearAllFilters() {
+            const confirmation = confirm(
+                '⚠️ ¿Estás seguro de que quieres limpiar todos los filtros?\n\n' +
+                'Esto restaurará todos los filtros a su estado por defecto.\n' +
+                'No se eliminarán los productos marcados como comprados.'
+            );
+
+            if (confirmation) {
+                try {
+                    // Clear all filter selections
+                    document.getElementById('grupoFilter').value = '';
+                    document.getElementById('categoriaFilter').value = '';
+                    document.getElementById('productoSearch').value = '';
+
+                    // Reset radio buttons to "todos"
+                    const estadoRadios = document.querySelectorAll('input[name="estadoFilter"]');
+                    estadoRadios.forEach(radio => {
+                        radio.checked = (radio.value === 'todos');
+                    });
+
+                    // Save the cleared state
+                    saveFiltersState();
+                    
+                    // Update UI
+                    updateFiltersBasedOnSelection();
+                    filterData();
+
+                    // Show feedback
+                    alert('✅ Todos los filtros han sido limpiados.');
+                } catch (error) {
+                    console.error('Error al limpiar filtros:', error);
+                    alert('❌ Error al limpiar filtros. Por favor, inténtalo de nuevo.');
+                }
+            }
+        }
 
         async function checkForDataChanges() {
             try {
