@@ -946,9 +946,10 @@
             return hash.toString();
         }
 
-        function showChangesDetectedPopup() {
+        // Modal utility functions
+        function createModalOverlay(id, zIndex = 2000) {
             const overlay = document.createElement('div');
-            overlay.id = 'changesOverlay';
+            overlay.id = id;
             overlay.style.cssText = `
                 position: fixed;
                 top: 0;
@@ -957,169 +958,172 @@
                 height: 100%;
                 background: rgba(0, 0, 0, 0.7);
                 backdrop-filter: blur(5px);
-                z-index: 2000;
+                z-index: ${zIndex};
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                animation: fadeIn 0.3s ease-out;
             `;
+            return overlay;
+        }
 
-            const popup = document.createElement('div');
-            popup.style.cssText = `
+        function createModalContent(config) {
+            const modal = document.createElement('div');
+            const {
+                maxWidth = '400px',
+                padding = '30px',
+                borderRadius = '16px',
+                additionalStyles = ''
+            } = config;
+
+            modal.style.cssText = `
                 background: linear-gradient(145deg, #ffffff, #f8f9fa);
-                border-radius: 16px;
+                border-radius: ${borderRadius};
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                padding: 30px;
-                max-width: 400px;
+                padding: ${padding};
+                max-width: ${maxWidth};
                 width: 100%;
                 text-align: center;
                 border: 1px solid rgba(255, 255, 255, 0.2);
+                ${additionalStyles}
+            `;
+            return modal;
+        }
+
+        function createModalButton(config) {
+            const {
+                id,
+                text,
+                isPrimary = false,
+                onClick,
+                additionalStyles = ''
+            } = config;
+
+            const button = document.createElement('button');
+            button.id = id;
+            button.textContent = text;
+
+            const baseStyles = `
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 600;
+                transition: all 0.3s ease;
             `;
 
-            popup.innerHTML = `
+            const primaryStyles = `
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            `;
+
+            const secondaryStyles = `
+                background: #6c757d;
+                color: white;
+            `;
+
+            button.style.cssText = baseStyles + (isPrimary ? primaryStyles : secondaryStyles) + additionalStyles;
+
+            if (onClick) {
+                button.addEventListener('click', onClick);
+            }
+
+            // Add hover effects
+            button.addEventListener('mouseenter', () => {
+                button.style.transform = 'translateY(-2px)';
+                if (isPrimary) {
+                    button.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.5)';
+                }
+            });
+
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translateY(0)';
+                if (isPrimary) {
+                    button.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+                }
+            });
+
+            return button;
+        }
+
+        function addFadeInAnimation() {
+            if (!document.getElementById('modalAnimations')) {
+                const style = document.createElement('style');
+                style.id = 'modalAnimations';
+                style.textContent = `
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes bounce {
+                        0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+                        40%, 43% { transform: translate3d(0, -20px, 0); }
+                        70% { transform: translate3d(0, -10px, 0); }
+                        90% { transform: translate3d(0, -4px, 0); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        function showChangesDetectedPopup() {
+            const overlay = createModalOverlay('changesOverlay');
+            const modal = createModalContent({ maxWidth: '400px' });
+
+            modal.innerHTML = `
                 <div style="font-size: 48px; margin-bottom: 16px;">🔄</div>
                 <h3 style="color: #2c3e50; margin: 0 0 16px; font-size: 1.4rem;">¡Cambios detectados!</h3>
                 <p style="color: #495057; margin: 0 0 24px; line-height: 1.5;">
                     Se han detectado cambios en la lista de compras. 
                     Haz clic en "Refrescar" para cargar los nuevos datos.
                 </p>
-                <div style="display: flex; gap: 12px; justify-content: center;">
-                    <button id="dismissChanges" style="
-                        background: #6c757d;
-                        color: white;
-                        border: none;
-                        padding: 12px 20px;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        transition: all 0.3s ease;
-                    ">Ignorar</button>
-                    <button id="refreshPage" style="
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        color: white;
-                        border: none;
-                        padding: 12px 20px;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        font-weight: 600;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-                    ">Refrescar</button>
+                <div style="display: flex; gap: 12px; justify-content: center;" id="changesButtonContainer">
                 </div>
             `;
 
-            overlay.appendChild(popup);
+            const buttonContainer = modal.querySelector('#changesButtonContainer');
+
+            const dismissButton = createModalButton({
+                id: 'dismissChanges',
+                text: 'Ignorar',
+                isPrimary: false,
+                onClick: () => document.body.removeChild(overlay)
+            });
+
+            const refreshButton = createModalButton({
+                id: 'refreshPage',
+                text: 'Refrescar',
+                isPrimary: true,
+                onClick: () => location.reload()
+            });
+
+            buttonContainer.appendChild(dismissButton);
+            buttonContainer.appendChild(refreshButton);
+
+            overlay.appendChild(modal);
             document.body.appendChild(overlay);
-
-            document.getElementById('dismissChanges').addEventListener('click', () => {
-                document.body.removeChild(overlay);
-            });
-
-            document.getElementById('refreshPage').addEventListener('click', () => {
-                location.reload();
-            });
-
-            const buttons = popup.querySelectorAll('button');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', () => {
-                    button.style.transform = 'translateY(-2px)';
-                });
-                button.addEventListener('mouseleave', () => {
-                    button.style.transform = 'translateY(0)';
-                });
-            });
-        }
-
-        async function checkForDataChanges() {
-            try {
-                const timestamp = new Date().getTime();
-                const urlWithCache = `${CSV_URL}&_cache_bust=${timestamp}`;
-                const response = await fetch(urlWithCache);
-
-                if (!response.ok) {
-                    console.log('Error al verificar cambios:', response.status);
-                    return;
-                }
-
-                const csvText = await response.text();
-                const newData = parseCSV(csvText);
-                const newDataHash = generateDataHash(newData);
-
-                if (lastDataHash && lastDataHash !== newDataHash) {
-                    console.log('Cambios detectados en los datos');
-                    showChangesDetectedPopup();
-                    if (checkInterval) {
-                        clearInterval(checkInterval);
-                        checkInterval = null;
-                    }
-                }
-
-                lastDataHash = newDataHash;
-
-            } catch (error) {
-                console.log('Error al verificar cambios:', error);
-            }
-        }
-
-        function startDataChangeTimer() {
-            checkInterval = setInterval(checkForDataChanges, 30000);
-            console.log('Temporizador de verificación de cambios iniciado (cada 30s)');
-        }
-
-        function stopDataChangeTimer() {
-            if (checkInterval) {
-                clearInterval(checkInterval);
-                checkInterval = null;
-                console.log('Temporizador de verificación detenido');
-            }
-        }
-
-        function checkAppVersion() {
-            const savedVersion = localStorage.getItem(VERSION_KEY);
-
-            if (savedVersion !== APP_VERSION) {
-                showVersionUpdateModal();
-                return false;
-            }
-
-            return true;
-        }
-
-        function updateAppVersion() {
-            localStorage.setItem(VERSION_KEY, APP_VERSION);
         }
 
         function showVersionUpdateModal() {
-            const overlay = document.createElement('div');
-            overlay.id = 'versionUpdateOverlay';
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                backdrop-filter: blur(8px);
-                z-index: 3000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: fadeIn 0.3s ease-out;
-            `;
+            addFadeInAnimation();
+            
+            const overlay = createModalOverlay('versionUpdateOverlay', 3000);
+            overlay.style.background = 'rgba(0, 0, 0, 0.8)';
+            overlay.style.backdropFilter = 'blur(8px)';
 
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                background: linear-gradient(145deg, #ffffff, #f8f9fa);
-                border-radius: 20px;
-                box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
-                padding: 40px;
-                max-width: 450px;
-                width: 90%;
-                text-align: center;
-                border: 2px solid rgba(255, 255, 255, 0.3);
-                position: relative;
-                overflow: hidden;
-            `;
+            const modal = createModalContent({
+                maxWidth: '450px',
+                padding: '40px',
+                borderRadius: '20px',
+                additionalStyles: `
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    position: relative;
+                    overflow: hidden;
+                    width: 90%;
+                `
+            });
 
             modal.innerHTML = `
                 <div style="font-size: 64px; margin-bottom: 20px; animation: bounce 1s ease-out;">🔄</div>
@@ -1137,76 +1141,59 @@
                         tus preferencias después de la actualización.
                     </p>
                 </div>
-                <button id="updateAppButton" style="
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    border: none;
-                    padding: 16px 32px;
-                    border-radius: 12px;
-                    cursor: pointer;
-                    font-size: 16px;
-                    font-weight: 600;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                <div id="updateButtonContainer"></div>
+            `;
+
+            const buttonContainer = modal.querySelector('#updateButtonContainer');
+
+            const updateButton = createModalButton({
+                id: 'updateAppButton',
+                text: 'Actualizar Aplicación',
+                isPrimary: true,
+                additionalStyles: `
                     width: 100%;
                     text-transform: uppercase;
                     letter-spacing: 1px;
-                ">
-                    Actualizar Aplicación
-                </button>
-            `;
+                    padding: 16px 32px;
+                    font-size: 16px;
+                `,
+                onClick: () => {
+                    try {
+                        localStorage.removeItem('purchasedItems');
+                        localStorage.removeItem('grupoFilter');
+                        localStorage.removeItem('categoriaFilter');
+                        localStorage.removeItem('productoSearch');
+                        localStorage.removeItem('estadoFilter');
+                        updateAppVersion();
+                    } catch (error) {
+                        console.error('Error clearing localStorage:', error);
+                        updateAppVersion();
+                    }
 
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
+                    updateButton.textContent = 'Actualizando...';
+                    updateButton.style.background = '#28a745';
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 }
-                @keyframes bounce {
-                    0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
-                    40%, 43% { transform: translate3d(0, -20px, 0); }
-                    70% { transform: translate3d(0, -10px, 0); }
-                    90% { transform: translate3d(0, -4px, 0); }
-                }
-            `;
-            document.head.appendChild(style);
+            });
 
-            overlay.appendChild(modal);
-            document.body.appendChild(overlay);
-
-            const updateButton = document.getElementById('updateAppButton');
+            // Enhanced hover effects for update button
             updateButton.addEventListener('mouseenter', () => {
                 updateButton.style.transform = 'translateY(-3px)';
                 updateButton.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.6)';
             });
+
             updateButton.addEventListener('mouseleave', () => {
                 updateButton.style.transform = 'translateY(0)';
                 updateButton.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
             });
 
-            updateButton.addEventListener('click', () => {
-                // Clear all localStorage data before updating
-                try {
-                    localStorage.removeItem('purchasedItems');
-                    localStorage.removeItem('grupoFilter');
-                    localStorage.removeItem('categoriaFilter');
-                    localStorage.removeItem('productoSearch');
-                    localStorage.removeItem('estadoFilter');
-                    // Update version after clearing
-                    updateAppVersion();
-                } catch (error) {
-                    console.error('Error clearing localStorage:', error);
-                    // Still update version even if clearing fails
-                    updateAppVersion();
-                }
+            buttonContainer.appendChild(updateButton);
 
-                updateButton.textContent = 'Actualizando...';
-                updateButton.style.background = '#28a745';
-
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            });
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
         }
 
         let isRefreshing = false;
