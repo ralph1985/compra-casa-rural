@@ -418,6 +418,44 @@
                     estadoRadio.checked = true;
                 }
             }
+
+            loadFiltersCollapsedState();
+        }
+
+        function loadFiltersCollapsedState() {
+            const savedCollapsed = localStorage.getItem('filtersCollapsed');
+            if (savedCollapsed !== null) {
+                isFiltersCollapsed = savedCollapsed === 'true';
+            } else {
+                isFiltersCollapsed = false;
+            }
+
+            applyFiltersCollapsedState();
+        }
+
+        function saveFiltersCollapsedState() {
+            localStorage.setItem('filtersCollapsed', isFiltersCollapsed.toString());
+        }
+
+        function applyFiltersCollapsedState() {
+            const filtersContent = document.getElementById('filtersContent');
+            const toggleButton = document.getElementById('toggleFiltersButton');
+            const activeFiltersSummary = document.getElementById('activeFiltersSummary');
+
+            if (!filtersContent || !toggleButton || !activeFiltersSummary) return;
+
+            const toggleText = toggleButton.querySelector('.toggle-text');
+
+            if (isFiltersCollapsed) {
+                filtersContent.style.display = 'none';
+                activeFiltersSummary.style.display = 'flex';
+                toggleText.textContent = 'Mostrar filtros';
+                updateActiveFiltersSummary();
+            } else {
+                filtersContent.style.display = 'flex';
+                activeFiltersSummary.style.display = 'none';
+                toggleText.textContent = 'Ocultar filtros';
+            }
         }
 
         function saveFiltersState() {
@@ -1472,27 +1510,9 @@
 
         // Función para alternar entre mostrar/ocultar filtros
         function toggleFilters() {
-            const filtersContent = document.getElementById('filtersContent');
-            const toggleButton = document.getElementById('toggleFiltersButton');
-            const toggleText = toggleButton.querySelector('.toggle-text');
-            const activeFiltersSummary = document.getElementById('activeFiltersSummary');
-            
-            if (!filtersContent || !toggleButton || !toggleText || !activeFiltersSummary) return;
-
-            if (isFiltersCollapsed) {
-                // Mostrar filtros
-                filtersContent.style.display = 'flex';
-                activeFiltersSummary.style.display = 'none';
-                toggleText.textContent = 'Ocultar filtros';
-                isFiltersCollapsed = false;
-            } else {
-                // Ocultar filtros
-                filtersContent.style.display = 'none';
-                activeFiltersSummary.style.display = 'flex';
-                toggleText.textContent = 'Mostrar filtros';
-                isFiltersCollapsed = true;
-                updateActiveFiltersSummary();
-            }
+            isFiltersCollapsed = !isFiltersCollapsed;
+            applyFiltersCollapsedState();
+            saveFiltersCollapsedState();
         }
 
         // Función para actualizar el resumen de filtros activos
@@ -1613,6 +1633,7 @@
                                 localStorage.removeItem('categoriaFilter');
                                 localStorage.removeItem('productoSearch');
                                 localStorage.removeItem('estadoFilter');
+                                localStorage.removeItem('filtersCollapsed');
 
                                 alert('✅ Aplicación reseteada correctamente.\n\nLa página se recargará para aplicar los cambios.');
                                 location.reload();
@@ -1640,6 +1661,8 @@
             if (toggleFiltersButton) {
                 toggleFiltersButton.addEventListener('click', toggleFilters);
             }
+
+            loadFiltersCollapsedState();
         });
 
         function clearAllFilters() {
