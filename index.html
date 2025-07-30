@@ -285,7 +285,8 @@
     </div>
 
     <script>
-        // Register Service Worker for PWA functionality
+        // TEMPORARILY DISABLE Service Worker to break the update loop
+        /*
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/compra-casa-rural/sw.js')
@@ -297,9 +298,10 @@
                     });
             });
         }
+        */
 
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
-        const APP_VERSION = "2025-07-30 00:30:00";
+        const APP_VERSION = "2025-07-30 09:00:00";
         const VERSION_KEY = "appVersion";
 
         let originalData = [];
