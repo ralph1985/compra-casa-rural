@@ -271,8 +271,35 @@
     </div>
 
     <script>
+        // Register Service Worker ONLY to clean up old caches and then unregister itself
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/compra-casa-rural/sw.js')
+                    .then(registration => {
+                        console.log('SW registered for cleanup: ', registration);
+                        
+                        // Force update to activate the cleanup service worker
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ command: 'skipWaiting' });
+                        }
+                        
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'activated') {
+                                    console.log('Cleanup SW activated');
+                                }
+                            });
+                        });
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
-        const APP_VERSION = "2025-07-30 09:30:00";
+        const APP_VERSION = "2025-07-30 09:40:00";
         const VERSION_KEY = "appVersion";
 
         let originalData = [];
