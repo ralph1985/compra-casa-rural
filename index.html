@@ -310,8 +310,8 @@
             });
         }
 
-        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTzU3A2YW5jGO4jF0lGpfEnJGCuUEOs1dKCl7zPVZma60j1sityN2DNhXW9RwJpEecyq-wUXow_5mtO/pub?output=csv";
-        const APP_VERSION = "2025-07-30 10:30:00";
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTlzOz8cjY9eEdK7a160s3D6jWYgbx6WSM8SHZvuk-UE94EW5mjB26l5jCrOhOv1PUfmJU61VYmSjI/pub?gid=1654533431&single=true&output=csv";
+        const APP_VERSION = "2026-07-26 12:00:00";
         const VERSION_KEY = "appVersion";
 
         // Mock CSV data para desarrollo local
@@ -468,18 +468,100 @@ Cerveza,48,latas,PM - Pedro y Marta,Bebida,`;
             return btoa(row.join('|')).replace(/[^a-zA-Z0-9]/g, '');
         }
 
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            const result = [];
+        function parseCSVRows(text) {
+            const rows = [];
+            let row = [];
+            let cell = '';
+            let inQuotes = false;
 
-            for (let line of lines) {
-                if (line.trim()) {
-                    const row = line.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''));
-                    result.push(row);
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        cell += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    row.push(cell.trim());
+                    cell = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && nextChar === '\n') {
+                        i++;
+                    }
+                    row.push(cell.trim());
+                    if (row.some(value => value !== '')) {
+                        rows.push(row);
+                    }
+                    row = [];
+                    cell = '';
+                } else {
+                    cell += char;
                 }
             }
 
-            return result;
+            row.push(cell.trim());
+            if (row.some(value => value !== '')) {
+                rows.push(row);
+            }
+
+            return rows;
+        }
+
+        function normalizeWideShoppingSheet(rows) {
+            if (rows.length === 0) return rows;
+
+            const sourceHeaders = rows[0];
+            const normalizedRows = [['Producto', 'Cantidad', 'Unidad', 'Grupo', 'Categoría', 'Notas']];
+            const categoryColumns = [];
+
+            sourceHeaders.forEach((header, index) => {
+                const trimmedHeader = header.trim();
+                const nextHeader = (sourceHeaders[index + 1] || '').trim().toLowerCase();
+
+                if (
+                    trimmedHeader &&
+                    trimmedHeader.toLowerCase() !== 'equipos' &&
+                    !trimmedHeader.toLowerCase().startsWith('equipo ') &&
+                    nextHeader.startsWith('equipo ')
+                ) {
+                    categoryColumns.push({
+                        productIndex: index,
+                        teamIndex: index + 1,
+                        category: trimmedHeader
+                    });
+                }
+            });
+
+            if (categoryColumns.length === 0) {
+                return rows;
+            }
+
+            rows.slice(1).forEach(row => {
+                categoryColumns.forEach(({ productIndex, teamIndex, category }) => {
+                    const product = (row[productIndex] || '').trim();
+                    if (!product) return;
+
+                    const team = (row[teamIndex] || '').trim() || 'Sin asignar';
+                    normalizedRows.push([product, '', '', team, category, '']);
+                });
+            });
+
+            return normalizedRows;
+        }
+
+        function parseCSV(text) {
+            const rows = parseCSVRows(text);
+            const headers = rows[0] || [];
+
+            if (headers.includes('Producto')) {
+                return rows;
+            }
+
+            return normalizeWideShoppingSheet(rows);
         }
 
         function sortData(columnIndex, direction = 'asc') {
@@ -877,7 +959,9 @@ Cerveza,48,latas,PM - Pedro y Marta,Bebida,`;
                 cantidadUnidad.textContent = cantidad + (unidad ? ` ${unidad}` : '');
 
                 line1.appendChild(producto);
-                line1.appendChild(cantidadUnidad);
+                if (cantidad || unidad) {
+                    line1.appendChild(cantidadUnidad);
+                }
 
                 const line2 = document.createElement('div');
                 line2.className = 'card-line line-2';
